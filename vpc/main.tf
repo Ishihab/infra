@@ -44,7 +44,7 @@ locals {
   db_subnet_group_name = {
     type        = "String"
     description = "Name of the database subnet group"
-    value       = module.vpc.database_subnet_group_name
+    value       = join(",", module.vpc.database_subnets)
   }
   vpc_id = {
     type        = "String"
@@ -65,7 +65,7 @@ locals {
 
 resource "aws_ssm_parameter" "vpc_outputs_for_eks" {
   for_each    = local.vpc_network_outputs
-  name        = "simple_social/${var.environment}/vpc/${each.key}"
+  name        = "/simple_social/${var.environment}/vpc/${each.key}"
   type        = each.value.type
   description = "managed by terraform,env ${var.environment} , ${each.value.description}"
   value       = each.value.value
