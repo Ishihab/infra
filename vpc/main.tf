@@ -41,9 +41,9 @@ module "vpc" {
 
 locals {
   vpc_network_outputs = {
-  db_subnet_group_name = {
+  db_subnets = {
     type        = "String"
-    description = "Name of the database subnet group"
+    description = "List of database subnet IDs"
     value       = join(",", module.vpc.database_subnets)
   }
   vpc_id = {
