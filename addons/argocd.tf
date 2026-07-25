@@ -3,6 +3,11 @@ resource "helm_release" "argo_cd" {
   repository = "https://argoproj.github.io/argo-helm"
   chart      = "argo-cd"
   version    = "10.2.1"
+  namespace = "argocd"
+  create_namespace = true
+  values = [
+    file("${path.module}/argocd_values.yaml")
+  ]
   set = [
     {
       name  = "server.insecure"
@@ -101,13 +106,24 @@ resource "helm_release" "argo_cd" {
         value = "kube-prometheus-stack"
     },
     {
-        name = "server.ingress.annotations"
-        value = <<EOT
-          kubernetes.io/ingress.class: alb
-          alb.ingress.kubernetes.io/scheme: internet-facing
-          alb.ingress.kubernetes.io/target-type: ip
-          alb.ingress.kubernetes.io/backend-protocol: HTTP
-          EOT
+        name = "server.ingress.annotations.alb\\.ingress\\.kubernetes\\.io/scheme"
+        value = "internet-facing"
+    },
+    {
+        name = "server.ingress.annotations.alb\\.ingress\\.kubernetes\\.io/target-type"
+        value = "ip"
+    },
+    {
+        name = "server.ingress.annotations.alb\\.ingress\\.kubernetes\\.io/ingress.class"
+        value = "alb"
+    },
+    {
+        name = "server.ingress.annotations.alb\\.ingress\\.kubernetes\\.io/backend-protocol"
+        value = "HTTP"
+    },
+    {
+        name = "global.domain"
+        value = ""
     }
   ]
 }
