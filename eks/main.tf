@@ -10,8 +10,27 @@ module "eks" {
   vpc_id                                   = data.aws_ssm_parameter.vpc_id.value
   enable_irsa                              = var.enable_irsa
   compute_config = {
-    enabled    = true
-    node_pools = ["general-purpose"]
+    enabled    = false
+  }
+  addons = {
+    coredns                = {}
+    eks-pod-identity-agent = {
+      before_compute = true
+    }
+    kube-proxy             = {}
+    vpc-cni                = {
+      before_compute = true
+    }
+  }
+  eks_managed_node_groups = {
+    default = {
+      ami_type       = "AL2023_x86_64_STANDARD"
+      instance_types = ["t3.medium"]
+
+      min_size     = 1
+      max_size     = 3
+      desired_size = 2
+    }
   }
   tags = {
     Environment = var.environment
