@@ -10,22 +10,34 @@ module "eks" {
   vpc_id                                   = data.aws_ssm_parameter.vpc_id.value
   enable_irsa                              = var.enable_irsa
   compute_config = {
-    enabled    = false
+    enabled = false
   }
   addons = {
-    coredns                = {}
+    coredns = {}
+    aws-ebs-csi-driver = {
+      most_recent = true
+      
+    }
     eks-pod-identity-agent = {
       before_compute = true
     }
-    kube-proxy             = {}
-    vpc-cni                = {
+    kube-proxy = {}
+    vpc-cni = {
       before_compute = true
+      most_recent = true
+      configuration_values = jsonencode({
+        env = {
+          ENABLE_PREFIX_DELEGATION = "true"
+          WARM_PREFIX_TARGET = "1"
+        }
+      })
     }
   }
   eks_managed_node_groups = {
     default = {
       ami_type       = "AL2023_x86_64_STANDARD"
       instance_types = ["t3.medium"]
+      enable_bootstrap_user_data = false
 
       min_size     = 1
       max_size     = 3
@@ -35,6 +47,10 @@ module "eks" {
   tags = {
     Environment = var.environment
     Terraform   = "true"
+  }
+  timeouts = {
+    create = "30m"
+    update = "30m"
   }
 }
 
