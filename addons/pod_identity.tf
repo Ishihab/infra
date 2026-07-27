@@ -44,3 +44,24 @@ module "external_secrets_pod_identity" {
   }
 }
 
+module "ebs_csi_driver_pod_identity" {
+  source = "terraform-aws-modules/eks-pod-identity/aws"
+
+  name = "ebs-csi-driver"
+
+  attach_aws_ebs_csi_policy = true
+
+  associations = {
+    this = {
+      cluster_name    = data.aws_ssm_parameter.cluster_name.value
+      namespace       = "kube-system"
+      service_account = "ebs-csi-controller-sa"
+    }
+  }
+
+  tags = {
+    Environment = var.environment
+    Terraform   = "true"
+  }
+  
+}
