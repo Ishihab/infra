@@ -41,6 +41,7 @@ module "external_secrets_pod_identity" {
 
   tags = {
     Environment = var.environment
+    Terraform   = "true"
   }
 }
 
