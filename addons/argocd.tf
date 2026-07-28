@@ -8,5 +8,5 @@ resource "helm_release" "argo_cd" {
   values = [
     file("${path.module}/argocd_values.yaml")
   ]
-
+  
 }

@@ -41,11 +41,6 @@ module "mysql_rds" {
         value = "UTC"
     }]
 
-    tags = {
-        Name = var.db_identifier
-        Environment = var.environment
-    }
-    
 }
 
 locals {
@@ -81,8 +76,5 @@ resource "aws_ssm_parameter" "db_outputs_for_eks" {
   type        = each.value.type
   description = "managed by terraform,env ${var.environment} , ${each.value.description}"
   value       = each.value.value
-  tags = {
-    "managed_by"  = "terraform"
-    "environment" = var.environment
-  }
+
 }
