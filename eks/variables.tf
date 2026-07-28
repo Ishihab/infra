@@ -22,12 +22,6 @@ variable "kubernetes_version" {
   default     = "1.36"
 }
 
-variable "enable_irsa" {
-  description = "Whether to enable IAM Roles for Service Accounts (IRSA)"
-  type        = bool
-  default     = true
-}
-
 variable "endpoint_private_access" {
   description = "Whether to enable private access to the EKS cluster endpoint"
   type        = bool
