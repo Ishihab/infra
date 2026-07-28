@@ -13,10 +13,6 @@ module "aws_lb_controller_pod_identity" {
     }
   }
 
-  tags = {
-    Environment = var.environment
-    Terraform   = "true"
-  }
 }
 
 
@@ -39,10 +35,6 @@ module "external_secrets_pod_identity" {
     }
   }
 
-  tags = {
-    Environment = var.environment
-    Terraform   = "true"
-  }
 }
 
 module "ebs_csi_driver_pod_identity" {
@@ -60,9 +52,4 @@ module "ebs_csi_driver_pod_identity" {
     }
   }
 
-  tags = {
-    Environment = var.environment
-    Terraform   = "true"
-  }
-  
 }
