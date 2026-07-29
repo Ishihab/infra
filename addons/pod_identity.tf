@@ -1,7 +1,7 @@
 module "aws_lb_controller_pod_identity" {
-  source = "terraform-aws-modules/eks-pod-identity/aws"
+  source  = "terraform-aws-modules/eks-pod-identity/aws"
   version = "2.8.1"
-  name = "aws-lbc"
+  name    = "aws-lbc"
 
   attach_aws_lb_controller_policy = true
 
@@ -17,9 +17,9 @@ module "aws_lb_controller_pod_identity" {
 
 
 module "external_secrets_pod_identity" {
-  source = "terraform-aws-modules/eks-pod-identity/aws"
+  source  = "terraform-aws-modules/eks-pod-identity/aws"
   version = "2.8.1"
-  name = "external-secrets"
+  name    = "external-secrets"
 
   attach_external_secrets_policy        = true
   external_secrets_ssm_parameter_arns   = ["arn:aws:ssm:*:*:parameter/simple_social/*"]
@@ -38,9 +38,9 @@ module "external_secrets_pod_identity" {
 }
 
 module "ebs_csi_driver_pod_identity" {
-  source = "terraform-aws-modules/eks-pod-identity/aws"
+  source  = "terraform-aws-modules/eks-pod-identity/aws"
   version = "2.8.1"
-  name = "ebs-csi-driver"
+  name    = "ebs-csi-driver"
 
   attach_aws_ebs_csi_policy = true
 

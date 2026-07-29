@@ -15,7 +15,7 @@ module "eks" {
     coredns = {}
     aws-ebs-csi-driver = {
       most_recent = true
-      
+
     }
     eks-pod-identity-agent = {
       before_compute = true
@@ -23,19 +23,19 @@ module "eks" {
     kube-proxy = {}
     vpc-cni = {
       before_compute = true
-      most_recent = true
+      most_recent    = true
       configuration_values = jsonencode({
         env = {
           ENABLE_PREFIX_DELEGATION = "true"
-          WARM_PREFIX_TARGET = "1"
+          WARM_PREFIX_TARGET       = "1"
         }
       })
     }
   }
   eks_managed_node_groups = {
     default = {
-      ami_type       = "AL2023_x86_64_STANDARD"
-      instance_types = ["t3.medium"]
+      ami_type                   = "AL2023_x86_64_STANDARD"
+      instance_types             = ["t3.medium"]
       enable_bootstrap_user_data = false
 
       min_size     = 1

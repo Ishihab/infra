@@ -1,45 +1,45 @@
 module "mysql_rds" {
-    source = "terraform-aws-modules/rds/aws"
-    version = "6.13.1"
-    identifier = var.db_identifier
-    engine = var.db_engine
-    engine_version = var.db_engine_version
-    family = "${var.db_engine}${var.db_engine_version}"
-    major_engine_version = var.db_engine_version
-    instance_class = var.db_instance_class
-    allocated_storage = var.db_allocated_storage
-    db_name = var.db_name
-    username = var.db_username
-    manage_master_user_password = true
-    vpc_security_group_ids = [data.aws_ssm_parameter.db_sg_id.value]
-    db_subnet_group_name = data.aws_ssm_parameter.database_subnet_group_name.value
-    multi_az = false
-    publicly_accessible = false
-    skip_final_snapshot = true
-    deletion_protection = false
-    performance_insights_enabled = false
-    monitoring_interval = 60
-    create_monitoring_role = true
-    parameters = [
+  source                       = "terraform-aws-modules/rds/aws"
+  version                      = "6.13.1"
+  identifier                   = var.db_identifier
+  engine                       = var.db_engine
+  engine_version               = var.db_engine_version
+  family                       = "${var.db_engine}${var.db_engine_version}"
+  major_engine_version         = var.db_engine_version
+  instance_class               = var.db_instance_class
+  allocated_storage            = var.db_allocated_storage
+  db_name                      = var.db_name
+  username                     = var.db_username
+  manage_master_user_password  = true
+  vpc_security_group_ids       = [data.aws_ssm_parameter.db_sg_id.value]
+  db_subnet_group_name         = data.aws_ssm_parameter.database_subnet_group_name.value
+  multi_az                     = false
+  publicly_accessible          = false
+  skip_final_snapshot          = true
+  deletion_protection          = false
+  performance_insights_enabled = false
+  monitoring_interval          = 60
+  create_monitoring_role       = true
+  parameters = [
     {
-        name  = "slow_query_log"
-        value = "1"
+      name  = "slow_query_log"
+      value = "1"
     },
 
     {
-        name  = "long_query_time"
-        value = "2"
+      name  = "long_query_time"
+      value = "2"
     },
 
-     {
-        name  = "log_output"
-        value = "FILE"
+    {
+      name  = "log_output"
+      value = "FILE"
     },
 
-     {
-        name = "time_zone"
-        value = "UTC"
-    }]
+    {
+      name  = "time_zone"
+      value = "UTC"
+  }]
 
 }
 

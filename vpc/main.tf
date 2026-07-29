@@ -40,51 +40,51 @@ module "vpc" {
 }
 
 module "mysql_rds_sg" {
-    source = "terraform-aws-modules/security-group/aws"
-    version = "6.0.0"
-    name = "mysql-rds-sg"
-    vpc_id = module.vpc.vpc_id
-    ingress_rules = {
-      for cidr_block in module.vpc.private_subnets_cidr_blocks : "mysql-${cidr_block}" => {
-        description = "Allow MySQL access from private subnet ${cidr_block}"
-        from_port   = 3306
-        to_port     = 3306
-        ip_protocol    = "tcp"
-        cidr_ipv4 = cidr_block
-        name = "mysql-${cidr_block}"
-      }
+  source  = "terraform-aws-modules/security-group/aws"
+  version = "6.0.0"
+  name    = "mysql-rds-sg"
+  vpc_id  = module.vpc.vpc_id
+  ingress_rules = {
+    for cidr_block in module.vpc.private_subnets_cidr_blocks : "mysql-${cidr_block}" => {
+      description = "Allow MySQL access from private subnet ${cidr_block}"
+      from_port   = 3306
+      to_port     = 3306
+      ip_protocol = "tcp"
+      cidr_ipv4   = cidr_block
+      name        = "mysql-${cidr_block}"
     }
-  
+  }
+
 }
 
 locals {
   vpc_network_outputs = {
-  db_subnets_name = {
-    type        = "String"
-    description = "List of database subnet IDs"
-    value       = module.vpc.database_subnet_group_name
-  }
-  vpc_id = {
-    type        = "String"
-    description = "ID of the VPC"
-    value       = module.vpc.vpc_id
-  }
-  private_subnets = {
-    type        = "StringList"
-    description = "List of private subnet IDs"
-    value       = join(",", module.vpc.private_subnets)
-  }
-  public_subnets = {
-    type        = "StringList"
-    description = "List of public subnet IDs"
-    value       = join(",", module.vpc.public_subnets)
-  }
-  db_sg_id = {
-    type        = "String"
-    description = "ID of the security group for the RDS instance"
-    value       = module.mysql_rds_sg.id
-  }}
-  
+    db_subnets_name = {
+      type        = "String"
+      description = "List of database subnet IDs"
+      value       = module.vpc.database_subnet_group_name
+    }
+    vpc_id = {
+      type        = "String"
+      description = "ID of the VPC"
+      value       = module.vpc.vpc_id
+    }
+    private_subnets = {
+      type        = "StringList"
+      description = "List of private subnet IDs"
+      value       = join(",", module.vpc.private_subnets)
+    }
+    public_subnets = {
+      type        = "StringList"
+      description = "List of public subnet IDs"
+      value       = join(",", module.vpc.public_subnets)
+    }
+    db_sg_id = {
+      type        = "String"
+      description = "ID of the security group for the RDS instance"
+      value       = module.mysql_rds_sg.id
+  } }
+
 }
 
 resource "aws_ssm_parameter" "vpc_outputs_for_eks" {

@@ -11,7 +11,7 @@ provider "aws" {
 provider "kubectl" {
   host                   = data.aws_ssm_parameter.cluster_endpoint.value
   cluster_ca_certificate = base64decode(data.aws_ssm_parameter.ca_cert.value)
-  load_config_file        = false
+  load_config_file       = false
 
   exec {
     api_version = "client.authentication.k8s.io/v1beta1"
