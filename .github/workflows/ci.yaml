@@ -1,37 +1,37 @@
-name: Continuous Integration
+# name: Continuous Integration
 
-on:
-  push:
-    branches:
-      - main
-  pull_request:
-    branches:
-      - main
+# on:
+#   push:
+#     branches:
+#       - main
+#   pull_request:
+#     branches:
+#       - main
 
-permissions:
-  contents: read
-  id-token: write
-  pull-requests: write
-  actions: write
+# permissions:
+#   contents: read
+#   id-token: write
+#   pull-requests: write
+#   actions: write
 
-jobs:
-  terraform:
-    name: Terraform
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v3
+# jobs:
+#   terraform:
+#     name: Terraform
+#     runs-on: ubuntu-latest
+#     steps:
+#       - name: Checkout repository
+#         uses: actions/checkout@v3
 
-      - name: Set up Terraform
-        uses: hashicorp/setup-terraform@v2
-        with:
-          terraform_version: 1.7.6
+#       - name: Set up Terraform
+#         uses: hashicorp/setup-terraform@v2
+#         with:
+#           terraform_version: 1.7.6
 
-      - name: Terraform Init
-        run: terraform init
+#       - name: Terraform Init
+#         run: terraform init
 
-      - name: Terraform Validate
-        run: terraform validate
+#       - name: Terraform Validate
+#         run: terraform validate
 
-      - name: Terraform Plan
-        run: terraform plan
+#       - name: Terraform Plan
+#         run: terraform plan
