@@ -1,3 +1,8 @@
+tflint {
+  required_version = "0.64.0"
+}
+
+
 config {
   format = "compact"
   plugin_dir = "~/.tflint.d/plugins"
@@ -12,6 +17,7 @@ config {
 
 plugin "terraform" {
   enabled = true
+  preset = "recommended"
 }
 
 plugin "aws" {
