@@ -1,0 +1,71 @@
+name: Initial Apply
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  id-token: write
+  pull-requests: write
+  actions: write
+
+jobs:
+  tf-lint:
+    name: Terraform Lint
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Set up Terraform
+        uses: hashicorp/setup-terraform@v2
+        with:
+          terraform_version: 1.15.8
+      - name: Terraform Init VPC
+        working-directory: ./vpc
+        run: terraform init -backend=false
+      - name: Terraform Validate VPC
+        working-directory: ./vpc
+        run: terraform validate
+      - name: Terraform Check VPC
+        working-directory: ./vpc
+        run: terraform fmt -check -recursive
+      - name: Terraform Init EKS
+        working-directory: ./eks
+        run: terraform init -backend=false
+      - name: Terraform Validate EKS
+        working-directory: ./eks
+        run: terraform validate
+      - name: Terraform Check EKS
+        working-directory: ./eks
+        run: terraform fmt -check -recursive
+      - name: Terraform Init RDS
+        working-directory: ./rds
+        run: terraform init -backend=false
+      - name: Terraform Validate RDS
+        working-directory: ./rds
+        run: terraform validate
+      - name: Terraform Check RDS
+        working-directory: ./rds
+        run: terraform fmt -check -recursive
+      - name: Terraform Init Addons
+        working-directory: ./addons
+        run: terraform init -backend=false
+      - name: Terraform Validate Addons
+        working-directory: ./addons
+        run: terraform validate
+      - name: Terraform Check Addons
+        working-directory: ./addons
+        run: terraform fmt -check -recursive
+      - name: TFLint
+        uses: terraform-linters/setup-tflint@v6
+        with:
+          tflint_version: 0.64.0
+      - name: TFLint init
+        run: tflint --init
+      - name: Run TFLint
+        run: tflint --recursive
+      
+      
+
+      
