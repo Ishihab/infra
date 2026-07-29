@@ -1,3 +1,6 @@
+data "aws_ssm_parameter" "vpc_id" {
+  name = "/simple_social/${var.environment}/vpc/vpc_id"
+}
 
 data "aws_ssm_parameter" "database_subnet_group_name" {
   name = "/simple_social/${var.environment}/vpc/db_subnets_name"
