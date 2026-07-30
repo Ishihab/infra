@@ -42,4 +42,4 @@ terraform.rc
 # End of https://www.toptal.com/developers/gitignore/api/terraform
 
 #allow tfvars file from environment directory
-!environment/*.tfvars
+!**/environment/*.tfvars
