@@ -1,0 +1,62 @@
+name: Terraform Destroy
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  id-token: write
+
+jobs:
+  terraform-destroy:
+    environment: dev
+    name: Terraform Destroy
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+
+      - name: Set up Terraform
+        uses: hashicorp/setup-terraform@dfe3c3f87815947d99a8997f908cb6525fc44e9e
+        with:
+          terraform_version: 1.7.6
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@e6de054238d6b7531b4efff3b6587d9aade6a06c
+        with:
+          role-to-assume: ${{ vars.AWS_ROLE_ARN }}
+          aws-region: us-east-1
+          audience: "sts.amazonaws.com"
+          role-skip-session-tagging: true
+
+      - name: Terraform Init VPC
+        working-directory: ./vpc
+        run: terraform init -backend-config="bucket=${{ vars.BACKEND_BUCKET }}" -backend-config="key=${{ vars.VPC_BACKEND_KEY }}"
+
+      - name: Terraform Destroy VPC
+        working-directory: ./vpc
+        run: terraform destroy -auto-approve -var-file=./environment/dev.tfvars
+
+      - name: Terraform Init EKS
+        working-directory: ./eks
+        run: terraform init -backend-config="bucket=${{ vars.BACKEND_BUCKET }}" -backend-config="key=${{ vars.EKS_BACKEND_KEY }}"
+
+      - name: Terraform Destroy EKS
+        working-directory: ./eks
+        run: terraform destroy -auto-approve -var-file=./environment/dev.tfvars
+
+      - name: Terraform Init RDS
+        working-directory: ./rds
+        run: terraform init -backend-config="bucket=${{ vars.BACKEND_BUCKET }}" -backend-config="key=${{ vars.RDS_BACKEND_KEY }}"
+
+      - name: Terraform Destroy RDS
+        working-directory: ./rds
+        run: terraform destroy -auto-approve -var-file=./environment/dev.tfvars
+
+      - name: Terraform Init Addons
+        working-directory: ./addons
+        run: terraform init -backend-config="bucket=${{ vars.BACKEND_BUCKET }}" -backend-config="key=${{ vars.ADDONS_BACKEND_KEY }}"
+
+      - name: Terraform Destroy Addons
+        working-directory: ./addons
+        run: terraform destroy -auto-approve -var-file=./environment/dev.tfvars
