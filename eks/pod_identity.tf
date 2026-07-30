@@ -39,12 +39,12 @@ module "external_secrets_pod_identity" {
 }
 
 module "ebs_csi_driver_pod_identity_role_policy" {
-  source = "terraform-aws-modules/iam/aws//modules/iam-role"
+  source  = "terraform-aws-modules/iam/aws//modules/iam-role"
   version = "6.8.0"
-  name = "ebs-csi-driver-role"
+  name    = "ebs-csi-driver-role"
   trust_policy_permissions = {
     TrustRoleAndServiceToAssume = {
-        actions = [
+      actions = [
         "sts:AssumeRole",
         "sts:TagSession",
       ]
@@ -59,6 +59,6 @@ module "ebs_csi_driver_pod_identity_role_policy" {
   policies = {
 
     ebs-csi-driver-policy = "arn:aws:iam::aws:policy/service-role/AmazonEBSCSIDriverPolicy"
-      
+
   }
 }

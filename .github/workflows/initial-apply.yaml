@@ -27,7 +27,7 @@ jobs:
           aws-region: us-east-1
       - name: Terraform Init VPC
         working-directory: ./vpc
-        run: terraform init -backend=false
+        run: terraform init -backend-config="bucket=${{ vars.BACKEND_BUCKET }}" -backend-config="key=${{ vars.VPC_BACKEND_KEY }}"
       - name: Terraform Validate VPC
         working-directory: ./vpc
         run: terraform validate
@@ -36,7 +36,7 @@ jobs:
         run: terraform fmt -check -recursive
       - name: Terraform Init EKS
         working-directory: ./eks
-        run: terraform init -backend=false
+        run: terraform init -backend-config="bucket=${{ vars.BACKEND_BUCKET }}" -backend-config="key=${{ vars.EKS_BACKEND_KEY }}"
       - name: Terraform Validate EKS
         working-directory: ./eks
         run: terraform validate
@@ -45,7 +45,7 @@ jobs:
         run: terraform fmt -check -recursive
       - name: Terraform Init RDS
         working-directory: ./rds
-        run: terraform init -backend=false
+        run: terraform init -backend-config="bucket=${{ vars.BACKEND_BUCKET }}" -backend-config="key=${{ vars.RDS_BACKEND_KEY }}"
       - name: Terraform Validate RDS
         working-directory: ./rds
         run: terraform validate
@@ -54,7 +54,7 @@ jobs:
         run: terraform fmt -check -recursive
       - name: Terraform Init Addons
         working-directory: ./addons
-        run: terraform init -backend=false
+        run: terraform init -backend-config="bucket=${{ vars.BACKEND_BUCKET }}" -backend-config="key=${{ vars.ADDONS_BACKEND_KEY }}"
       - name: Terraform Validate Addons
         working-directory: ./addons
         run: terraform validate
@@ -63,7 +63,7 @@ jobs:
         run: terraform fmt -check -recursive
       - name: Terraform Apply VPC
         working-directory: ./vpc
-        run: terraform apply -auto-approve -var-file=./environment/dev.tfvars
+        run: terraform apply -auto-approve -var-file=./environment/dev.tfvars 
       - name: Terraform Apply EKS
         working-directory: ./eks
         run: terraform apply -auto-approve -var-file=./environment/dev.tfvars
