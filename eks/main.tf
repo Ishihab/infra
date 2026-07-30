@@ -15,7 +15,10 @@ module "eks" {
     coredns = {}
     aws-ebs-csi-driver = {
       most_recent = true
-
+      pod_identity_association = [{
+        role_arn        = module.ebs_csi_driver_pod_identity_role_policy.arn
+        service_account = "ebs-csi-controller-sa"
+      }]
     }
     eks-pod-identity-agent = {
       before_compute = true

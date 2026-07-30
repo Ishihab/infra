@@ -1,3 +1,4 @@
+
 module "aws_lb_controller_pod_identity" {
   source  = "terraform-aws-modules/eks-pod-identity/aws"
   version = "2.8.1"
@@ -7,7 +8,7 @@ module "aws_lb_controller_pod_identity" {
 
   associations = {
     this = {
-      cluster_name    = data.aws_ssm_parameter.cluster_name.value
+      cluster_name    = var.cluster_name
       namespace       = "kube-system"
       service_account = "aws-load-balancer-controller"
     }
@@ -29,7 +30,7 @@ module "external_secrets_pod_identity" {
 
   associations = {
     this = {
-      cluster_name    = data.aws_ssm_parameter.cluster_name.value
+      cluster_name    = var.cluster_name
       namespace       = "external-secrets"
       service_account = "external-secrets"
     }
@@ -37,19 +38,27 @@ module "external_secrets_pod_identity" {
 
 }
 
-module "ebs_csi_driver_pod_identity" {
-  source  = "terraform-aws-modules/eks-pod-identity/aws"
-  version = "2.8.1"
-  name    = "ebs-csi-driver"
-
-  attach_aws_ebs_csi_policy = true
-
-  associations = {
-    this = {
-      cluster_name    = data.aws_ssm_parameter.cluster_name.value
-      namespace       = "kube-system"
-      service_account = "ebs-csi-controller-sa"
+module "ebs_csi_driver_pod_identity_role_policy" {
+  source = "terraform-aws-modules/iam/aws//modules/iam-role"
+  version = "6.8.0"
+  name = "ebs-csi-driver-role"
+  trust_policy_permissions = {
+    TrustRoleAndServiceToAssume = {
+        actions = [
+        "sts:AssumeRole",
+        "sts:TagSession",
+      ]
+      principals = [{
+        type = "Service"
+        identifiers = [
+          "pods.eks.amazonaws.com"
+        ]
+      }]
     }
   }
+  policies = {
 
+    ebs-csi-driver-policy = "arn:aws:iam::aws:policy/service-role/AmazonEBSCSIDriverPolicy"
+      
+  }
 }
