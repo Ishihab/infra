@@ -40,6 +40,6 @@ override.tf.json
 terraform.rc
 
 # End of https://www.toptal.com/developers/gitignore/api/terraform
-
+**/.pike
 #allow tfvars file from environment directory
 !**/environment/*.tfvars
