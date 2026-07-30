@@ -46,7 +46,7 @@ jobs:
         run: terraform init -backend-config="bucket=${{ vars.BACKEND_BUCKET }}" -backend-config="key=${{ vars.RDS_BACKEND_KEY }}"
       - name: Terraform Destroy RDS
         working-directory: ./rds
-        run: terraform destroy -auto-approve -var-file=./environment/dev.tfvars 
+        run: terraform destroy -auto-approve -var-file=./environment/dev.tfvars -var="db_username=${{ secrets.DB_USERNAME }}"
 
       - name: Terraform Init VPC
         working-directory: ./vpc
