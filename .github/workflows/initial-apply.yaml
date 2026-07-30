@@ -26,6 +26,7 @@ jobs:
           role-to-assume: ${{ vars.AWS_ROLE_ARN }}
           aws-region: us-east-1
           audience: "sts.amazonaws.com"
+          role-skip-session-tagging: true
       - name: Terraform Init VPC
         working-directory: ./vpc
         run: terraform init -backend-config="bucket=${{ vars.BACKEND_BUCKET }}" -backend-config="key=${{ vars.VPC_BACKEND_KEY }}"
