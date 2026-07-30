@@ -40,6 +40,9 @@ module "eks" {
       ami_type                   = "AL2023_x86_64_STANDARD"
       instance_types             = ["t3.medium"]
       enable_bootstrap_user_data = false
+      metadata_options = {
+        http_put_response_hop_limit = 2
+      }
 
       min_size     = 1
       max_size     = 3
