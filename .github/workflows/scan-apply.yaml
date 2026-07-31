@@ -95,7 +95,7 @@ jobs:
 
   checkov-plan-scan:
     environment: dev
-    needs: check-if-pr-merged
+    needs: [check-if-pr-merged, terraform-static-scan]
     if: needs.check-if-pr-merged.outputs.pr-merged == 'false' 
     runs-on: ubuntu-24.04
     steps:
@@ -191,7 +191,7 @@ jobs:
           sarif_file: checkov-eks-plan-scan-results.sarif
       - name: Upload Checkov SARIF results
         uses: github/codeql-action/upload-sarif@v2
-        if: 
+        if: always()
         with:
           sarif_file: checkov-rds-plan-scan-results.sarif
       - name: Upload Checkov SARIF results
@@ -218,8 +218,8 @@ jobs:
               body: commentBody
             });
   terraform-apply:
-    needs: check-if-pr-merged
-    if: github.event_name != 'pull_request'
+    needs: [check-if-pr-merged, checkov-plan-scan]
+    if: github.event_name != 'pull_request' && (success() || needs.checkov-plan-scan.result == 'skipped')
     environment: dev
     name: Terraform Apply
     runs-on: ubuntu-24.04
