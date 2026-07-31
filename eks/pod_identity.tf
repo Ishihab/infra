@@ -1,11 +1,13 @@
 
 module "aws_lb_controller_pod_identity" {
+  #checkov:skip=CKV_TF_1:This module are well maintained public terraform module, using sha will upgrades more annoying for a personal project.
   source  = "terraform-aws-modules/eks-pod-identity/aws"
   version = "2.8.1"
   name    = "aws-lbc"
 
   attach_aws_lb_controller_policy = true
-
+  #checkov:skip=CKV_AWS_356: AWS-managed LB controller policy (attach_aws_lb_controller_policy); many of its actions don't support resource-level ARNs — this is the AWS-published policy, not custom
+  #checkov:skip=CKV_AWS_111: AWS-managed LB controller policy (attach_aws_lb_controller_policy); many of its actions don't support resource-level ARNs — this is the AWS-published policy, not custom
   associations = {
     this = {
       cluster_name    = var.cluster_name
@@ -18,6 +20,7 @@ module "aws_lb_controller_pod_identity" {
 
 
 module "external_secrets_pod_identity" {
+  #checkov:skip=CKV_TF_1:This module are well maintained public terraform module, using sha will upgrades more annoying for a personal project.
   source  = "terraform-aws-modules/eks-pod-identity/aws"
   version = "2.8.1"
   name    = "external-secrets"
@@ -39,6 +42,7 @@ module "external_secrets_pod_identity" {
 }
 
 module "ebs_csi_driver_pod_identity_role_policy" {
+  #checkov:skip=CKV_TF_1:This module are well maintained public terraform module, using sha will upgrades more annoying for a personal project.
   source  = "terraform-aws-modules/iam/aws//modules/iam-role"
   version = "6.8.0"
   name    = "ebs-csi-driver-role"

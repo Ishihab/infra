@@ -1,4 +1,5 @@
 module "eks" {
+  #checkov:skip=CKV_TF_1:This module are well maintained public terraform module, using sha will upgrades more annoying for a personal project.
   source                                   = "terraform-aws-modules/eks/aws"
   version                                  = "21.24.0"
   name                                     = var.cluster_name
@@ -8,6 +9,7 @@ module "eks" {
   endpoint_public_access                   = var.endpoint_public_access
   enable_cluster_creator_admin_permissions = var.enable_cluster_creator_admin_permissions
   vpc_id                                   = data.aws_ssm_parameter.vpc_id.value
+  create_security_group = false
   compute_config = {
     enabled = false
   }
@@ -42,6 +44,8 @@ module "eks" {
       enable_bootstrap_user_data = false
       metadata_options = {
         http_put_response_hop_limit = 2
+        #checkov:skip=CKV_AWS_341: hop limit of 2 required to allow Pods to access node credentials. alb controller need vpc id from node metadata to function properly.
+        http_tokens = "required"
       }
 
       min_size     = 1
@@ -59,7 +63,7 @@ module "eks" {
 locals {
   eks_outputs = {
     cluster_endpoint = {
-      type        = "String"
+      type        = "SecureString"
       description = "The endpoint for the EKS cluster"
       value       = module.eks.cluster_endpoint
     }
@@ -70,12 +74,12 @@ locals {
     }
 
     cluster_name = {
-      type        = "String"
+      type        = "SecureString"
       description = "The name of the EKS cluster"
       value       = module.eks.cluster_name
     }
     cluster_arn = {
-      type        = "String"
+      type        = "SecureString"
       description = "The ARN of the EKS cluster"
       value       = module.eks.cluster_arn
     }

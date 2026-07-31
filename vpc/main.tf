@@ -16,6 +16,10 @@ module "vpc" {
   enable_dns_hostnames = true
   enable_dns_support   = true
 
+  manage_default_security_group = true
+  default_security_group_egress = {}
+  default_security_group_ingress = {}
+
   azs                              = local.azs
   public_subnets                   = [for k, v in local.azs : cidrsubnet(var.vpc_cidr, 4, k)]
   private_subnets                  = [for k, v in local.azs : cidrsubnet(var.vpc_cidr, 4, k + 3)]
@@ -27,6 +31,8 @@ module "vpc" {
   enable_nat_gateway     = true
   single_nat_gateway     = var.single_nat_gateway
   one_nat_gateway_per_az = var.one_nat_gateway_per_az
+  #checkov:skip=CKV2_AWS_19:This EIP is used for NAT Gateway and is required for the VPC to function properly.
+  #checkov:skip=CKV_TF_1:This module are well maintained public terraform module, using sha will make upgrades more annoying for a personal project.
 
   public_subnet_tags = {
     "kubernetes.io/role/elb" = "1"
@@ -44,6 +50,7 @@ module "mysql_rds_sg" {
   version = "6.0.0"
   name    = "mysql-rds-sg"
   vpc_id  = module.vpc.vpc_id
+  #checkov:skip=CKV_TF_1:This module are well maintained public terraform module, using sha will make upgrades more annoying for a personal project.
   ingress_rules = {
     for cidr_block in module.vpc.private_subnets_cidr_blocks : "mysql-${cidr_block}" => {
       description = "Allow MySQL access from private subnet ${cidr_block}"
@@ -57,9 +64,11 @@ module "mysql_rds_sg" {
 
 }
 
+
+
 locals {
   vpc_network_outputs = {
-    db_subnets_name = {
+    db_subnet_group_name = {
       type        = "String"
       description = "List of database subnet IDs"
       value       = module.vpc.database_subnet_group_name
@@ -93,6 +102,7 @@ resource "aws_ssm_parameter" "vpc_outputs_for_eks" {
   type        = each.value.type
   description = "managed by terraform,env ${var.environment} , ${each.value.description}"
   value       = each.value.value
+  #checkov:skip=CKV2_AWS_34:Non sensitive vpc resource references, not sensitive data, no need SecretString type.
 }
 
 
