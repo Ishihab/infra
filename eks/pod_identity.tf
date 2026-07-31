@@ -13,7 +13,7 @@ module "aws_lb_controller_pod_identity" {
       service_account = "aws-load-balancer-controller"
     }
   }
-
+  depends_on = [ module.eks ]
 }
 
 
@@ -35,7 +35,7 @@ module "external_secrets_pod_identity" {
       service_account = "external-secrets"
     }
   }
-
+  depends_on = [ module.eks ]
 }
 
 module "ebs_csi_driver_pod_identity_role_policy" {
