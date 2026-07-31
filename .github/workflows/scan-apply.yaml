@@ -218,8 +218,8 @@ jobs:
               body: commentBody
             });
   terraform-apply:
-    needs: [check-if-pr-merged, checkov-plan-scan]
-    if: github.event_name != 'pull_request' && (success() || needs.checkov-plan-scan.result == 'skipped')
+    needs: [check-if-pr-merged, checkov-plan-scan, terraform-static-scan]
+    if: github.event_name != 'pull_request' && (needs.checkov-plan-scan.result == 'success' || needs.checkov-plan-scan.result == 'skipped') && (needs.terraform-static-scan.result == 'success' || needs.terraform-static-scan.result == 'skipped')
     environment: dev
     name: Terraform Apply
     runs-on: ubuntu-24.04
