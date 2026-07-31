@@ -2,8 +2,6 @@ name: Terraform Scan and Apply
 
 on:
   pull_request: 
-    branches: 
-      - main
   push: 
     branches:
       - main
