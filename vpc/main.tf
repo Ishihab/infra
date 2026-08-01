@@ -71,8 +71,8 @@ module "eci_enpoint_sg" {
   vpc_id  = module.vpc.vpc_id
   #checkov:skip=CKV_TF_1:This module are well maintained public terraform module, using sha will make upgrades more annoying for a personal project.
   egress_rules = {
-    https = {
-      description = "Allow HTTPS access to the internet"
+    allow_vpc = {
+      description = "Allow HTTPS access to the VPC"
       from_port   = 443
       to_port     = 443
       ip_protocol = "tcp"
