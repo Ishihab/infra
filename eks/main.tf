@@ -5,6 +5,7 @@ module "eks" {
   name                                     = var.cluster_name
   subnet_ids                               = split(",", data.aws_ssm_parameter.private_subnets.value)
   kubernetes_version                       = var.kubernetes_version
+  #checkov:skip=CKV_AWS_339: EKS support version 1.36, checkov is not updated yet, this is a false positive.
   endpoint_private_access                  = var.endpoint_private_access
   endpoint_public_access                   = var.endpoint_public_access
   enable_cluster_creator_admin_permissions = var.enable_cluster_creator_admin_permissions

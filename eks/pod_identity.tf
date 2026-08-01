@@ -8,6 +8,7 @@ module "aws_lb_controller_pod_identity" {
   attach_aws_lb_controller_policy = true
   #checkov:skip=CKV_AWS_356: AWS-managed LB controller policy (attach_aws_lb_controller_policy); many of its actions don't support resource-level ARNs — this is the AWS-published policy, not custom
   #checkov:skip=CKV_AWS_111: AWS-managed LB controller policy (attach_aws_lb_controller_policy); many of its actions don't support resource-level ARNs — this is the AWS-published policy, not custom
+  #checkov:skip=CKV_AWS_109: AWS-managed LB controller policy (attach_aws_lb_controller_policy); many of its actions don't support resource-level ARNs — this is the AWS-published policy, not custom
   associations = {
     this = {
       cluster_name    = var.cluster_name
