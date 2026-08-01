@@ -64,10 +64,32 @@ module "mysql_rds_sg" {
 
 }
 
+module "eci_enpoint_sg" {
+  source = "terraform-aws-modules/security-group/aws"
+  version = "6.0.0"
+  name    = "eci-endpoint-sg"
+  vpc_id  = module.vpc.vpc_id
+  #checkov:skip=CKV_TF_1:This module are well maintained public terraform module, using sha will make upgrades more annoying for a personal project.
+  egress_rules = {
+    from_port   = 443
+    to_port     = 443
+    ip_protocol = "tcp"
+    cidr_blocks = [module.vpc.vpc_cidr_block]
+  }
 
+  tags = {
+    Name = "eci-endpoint-sg"
+  }
+  
+}
 
 locals {
   vpc_network_outputs = {
+    eci_endpoint_sg_id = {
+      type        = "String"
+      description = "ID of the security group for the ECI endpoint"
+      value       = module.eci_enpoint_sg.id
+    }
     db_subnet_group_name = {
       type        = "String"
       description = "List of database subnet IDs"

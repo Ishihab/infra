@@ -10,6 +10,12 @@ module "eks" {
   enable_cluster_creator_admin_permissions = var.enable_cluster_creator_admin_permissions
   vpc_id                                   = data.aws_ssm_parameter.vpc_id.value
   create_security_group = false
+  security_group_additional_rules = {
+    from_port = 443
+    to_port = 443
+    protocol = "tcp"
+    source_security_group_id = data.aws_ssm_parameter.eci_endpoint_sg_id.value
+  }
   compute_config = {
     enabled = false
   }
@@ -47,6 +53,7 @@ module "eks" {
         #checkov:skip=CKV_AWS_341: hop limit of 2 required to allow Pods to access node credentials. alb controller need vpc id from node metadata to function properly.
         http_tokens = "required"
       }
+      
 
       min_size     = 1
       max_size     = 3
