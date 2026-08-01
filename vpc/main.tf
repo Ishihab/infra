@@ -17,8 +17,8 @@ module "vpc" {
   enable_dns_support   = true
 
   manage_default_security_group = true
-  default_security_group_egress = {}
-  default_security_group_ingress = {}
+  default_security_group_egress = []
+  default_security_group_ingress = []
 
   azs                              = local.azs
   public_subnets                   = [for k, v in local.azs : cidrsubnet(var.vpc_cidr, 4, k)]
@@ -71,10 +71,13 @@ module "eci_enpoint_sg" {
   vpc_id  = module.vpc.vpc_id
   #checkov:skip=CKV_TF_1:This module are well maintained public terraform module, using sha will make upgrades more annoying for a personal project.
   egress_rules = {
-    from_port   = 443
-    to_port     = 443
-    ip_protocol = "tcp"
-    cidr_blocks = [module.vpc.vpc_cidr_block]
+    https = {
+      description = "Allow HTTPS access to the internet"
+      from_port   = 443
+      to_port     = 443
+      ip_protocol = "tcp"
+      cidr_ipv4   = module.vpc.vpc_cidr_block
+    }
   }
 
   tags = {
