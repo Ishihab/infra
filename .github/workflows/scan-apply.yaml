@@ -35,14 +35,16 @@ jobs:
       - name: Check if PR merged or direct push
         id: check
         run: |
-          PR_LIST=$(gh api repos/${{ github.repository }}/commits/${{ env.COMMIT_SHA }}/pulls)
-          PR_COUNT=$(echo "$PR_LIST" | jq length)
-          if [ ${{ github.event_name }} == 'pull_request' ]; then
+          if [ "${{ github.event_name }}" == "pull_request" ]; then
             echo "pr-merged=false" >> $GITHUB_OUTPUT
-          elif [ "$PR_COUNT" -gt 0 ]; then
-            echo "pr-merged=true" >> $GITHUB_OUTPUT
           else
-            echo "pr-merged=false" >> $GITHUB_OUTPUT
+            PR_LIST=$(gh api repos/${{ github.repository }}/commits/${{ env.COMMIT_SHA }}/pulls)
+            PR_COUNT=$(echo "$PR_LIST" | jq length)
+            if [ "$PR_COUNT" -gt 0 ]; then
+              echo "pr-merged=true" >> $GITHUB_OUTPUT
+            else
+              echo "pr-merged=false" >> $GITHUB_OUTPUT
+            fi
           fi
   terraform-static-scan:
     needs: check-if-pr-merged
