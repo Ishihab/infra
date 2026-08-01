@@ -55,22 +55,22 @@ module "mysql_rds" {
 locals {
   db_outputs = {
     db_name = {
-      type        = "SecretString"
+      type        = "SecureString"
       description = "The name of the database"
       value       = module.mysql_rds.db_instance_name
     }
     db_endpoint = {
-      type        = "SecretString"
+      type        = "SecureString"
       description = "The endpoint of the database"
       value       = module.mysql_rds.db_instance_endpoint
     }
     db_username = {
-      type        = "SecretString"
+      type        = "SecureString"
       description = "The username for the database"
       value       = module.mysql_rds.db_instance_username
     }
     db_master_user_secret_arn = {
-      type        = "SecretString"
+      type        = "SecureString"
       description = "The ARN of the secret for the database master user"
       value       = module.mysql_rds.db_instance_master_user_secret_arn
     }
