@@ -16,8 +16,8 @@ module "vpc" {
   enable_dns_hostnames = true
   enable_dns_support   = true
 
-  manage_default_security_group = true
-  default_security_group_egress = []
+  manage_default_security_group  = true
+  default_security_group_egress  = []
   default_security_group_ingress = []
 
   azs                              = local.azs
@@ -65,7 +65,7 @@ module "mysql_rds_sg" {
 }
 
 module "eci_enpoint_sg" {
-  source = "terraform-aws-modules/security-group/aws"
+  source  = "terraform-aws-modules/security-group/aws"
   version = "6.0.0"
   name    = "eci-endpoint-sg"
   vpc_id  = module.vpc.vpc_id
@@ -83,7 +83,7 @@ module "eci_enpoint_sg" {
   tags = {
     Name = "eci-endpoint-sg"
   }
-  
+
 }
 
 locals {
