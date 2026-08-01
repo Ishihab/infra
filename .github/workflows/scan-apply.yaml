@@ -2,9 +2,14 @@ name: Terraform Scan and Apply
 
 on:
   pull_request: 
+    paths-ignore: 
+      - ".github/workflows/**"
+      
   push: 
     branches:
       - main
+    paths-ignore: 
+      - ".github/workflows/**"
 
 env:
   TF_PLUGIN_CACHE_DIR: ${{ github.workspace }}/.terraform.d/plugin-cache
