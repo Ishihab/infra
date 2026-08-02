@@ -1,0 +1,64 @@
+name: terraform-static-scan
+description: Run a static scan on Terraform files using Checkov and TfLint.
+
+inputs:
+  checkov_soft_fail:
+    description: 'If true, the Checkov scan will not fail the workflow issues.'
+    required: true
+    default: 'false'
+  tf_plugin_cache_dir:
+    description: 'The directory to cache Terraform providers.'
+    required: true
+    default: '${{ github.workspace }}/.terraform.d/plugin-cache'
+  tf_dirs:
+    description: 'A space-separated list of directories containing Terraform files to scan.'
+    required: true
+    default: 'vpc eks rds addons'
+
+runs:
+  using: "composite"
+  steps:
+    - name: Checkout repository, Set up Terraform, and Cache Providers
+      uses: ./.github/workflows/terraform-setup-cache
+      with:
+        tf_plugin_cache_dir: ${{ inputs.tf_plugin_cache_dir }}
+        terraform_version: 6.0.0
+    - name: Terraform Init
+      shell: bash
+      run: |
+        for dir in ${{ inputs.tf_dirs }}; do
+          echo "=================================================="
+          echo "Processing Directory: $dir"
+          echo "=================================================="
+          
+          # Navigate to directory, run commands, and return
+          cd "$dir"
+          terraform init --backend=false
+          terraform validate
+          terraform fmt -check -recursive
+          cd - > /dev/null
+        done
+    - name: TfLint Setup
+      uses: terraform-linters/setup-tflint@6e1e0642c0289bd619021bf6b34e3c08ed1e005a
+      with:
+        tflint_version: 0.64.0
+    - name: TfLint Init
+      shell: bash
+      run: tflint --init --config ${{ github.workspace }}/.tflint.hcl --recursive
+    - name: Run TfLint
+      shell: bash
+      run: tflint --config ${{ github.workspace }}/.tflint.hcl --recursive
+    - name: Checkov Scan
+      uses: bridgecrewio/checkov-action@7b972723c44fb3d256283fac96fae5d7c1894bb7
+      with:
+        directory: ${{ github.workspace }}
+        soft_fail: ${{ inputs.checkov_soft_fail }}
+        download_external_modules: true
+        output_format: cli,sarif
+        output_file_path: console,checkov-static-scan-results.sarif
+    - name: Upload Checkov SARIF results
+      uses: github/codeql-action/upload-sarif@f0489abddd4e5e9dff53ed28a45b1d6f88978a1b
+      if: always()
+      with:
+        sarif_file: checkov-static-scan-results.sarif
+

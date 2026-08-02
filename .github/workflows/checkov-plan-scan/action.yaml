@@ -1,0 +1,35 @@
+name: Checkov Plan Scan
+description: Run a Checkov scan on Terraform plan files.
+
+inputs:
+  tf_directory:
+    description: 'The directory containing the Terraform files to scan.'
+    required: true
+    default: './'
+  checkov_soft_fail:
+    description: 'If true, the Checkov scan will not fail the workflow issues.'
+    required: true
+    default: 'false'
+
+
+runs:
+  using: "composite"
+  steps:
+    - name: change tfplan to json
+      shell: bash
+      working-directory: ${{ inputs.tf_directory }}
+      run: terraform show -json tfplan.binary > tfplan.json
+    - name: Checkov Plan Scan
+      uses: bridgecrewio/checkov-action@7b972723c44fb3d256283fac96fae5d7c1894bb7
+      with:
+        file: ${{ inputs.tf_directory }}/tfplan.json
+        soft_fail: ${{ inputs.checkov_soft_fail }}
+        output_format: cli,sarif
+        output_file_path: console,checkov-plan-scan-results.sarif
+    - name: Upload Checkov SARIF results
+      uses: github/codeql-action/upload-sarif@f0489abddd4e5e9dff53ed28a45b1d6f88978a1b
+      if: always()
+      with:
+        sarif_file: checkov-plan-scan-results.sarif
+
+  
