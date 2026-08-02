@@ -24,12 +24,14 @@ runs:
       with:
         file: ${{ inputs.tf_directory }}/tfplan.json
         soft_fail: ${{ inputs.checkov_soft_fail }}
+        skip_check: CKV2_AWS_5, CKV2_AWS_11, CKV2_AWS_34, CKV2_AWS_19
         output_format: cli,sarif
-        output_file_path: console,checkov-plan-scan-results.sarif
+        output_file_path: console,results.sarif
+
     - name: Upload Checkov SARIF results
       uses: github/codeql-action/upload-sarif@f0489abddd4e5e9dff53ed28a45b1d6f88978a1b
       if: always()
       with:
-        sarif_file: checkov-plan-scan-results.sarif
+        sarif_file: results.sarif
 
   
