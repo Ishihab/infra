@@ -27,18 +27,3 @@ runs:
         skip_check: CKV2_AWS_5, CKV2_AWS_11, CKV2_AWS_34, CKV2_AWS_19
         output_format: cli,sarif
         output_file_path: console,results.sarif
-    - name: check file existence
-      shell: bash
-      run: |
-        cd ${{ github.workspace }} && ls -R
-    - name: check file existence
-      shell: bash
-      run: find ${{ github.workspace }} -name "results.sarif" -type f -print
-
-    - name: Upload Checkov SARIF results
-      uses: github/codeql-action/upload-sarif@f0489abddd4e5e9dff53ed28a45b1d6f88978a1b
-      if: always()
-      with:
-        sarif_file: ${{ github.workspace }}/results.sarif
-
-  
