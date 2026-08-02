@@ -1,0 +1,46 @@
+name: terraform-static-scan
+description: Run a static scan on Terraform files using Checkov and TfLint.
+
+inputs:
+  tf_directory:
+    description: 'The directory containing the Terraform files to scan.'
+    required: true
+    default: './'
+  checkov_soft_fail:
+    description: 'If true, the Checkov scan will not fail the workflow on minor issues.'
+    required: true
+    default: 'true'
+  tf_plugin_cache_dir:
+    description: 'The directory to cache Terraform providers.'
+    required: true
+    default: '${{ github.workspace }}/.terraform.d/plugin-cache'
+
+runs:
+  using: "composite"
+  steps:
+    - name: TfLint Setup
+      uses: terraform-linters/setup-tflint@6e1e0642c0289bd619021bf6b34e3c08ed1e005a
+      with:
+        tflint_version: 0.64.0
+    - name: TfLint Init
+      shell: bash
+      working-directory: ${{ inputs.tf_directory }}
+      run: tflint --init --config ${{ github.workspace }}/.tflint.hcl
+    - name: Run TfLint
+      shell: bash
+      working-directory: ${{ inputs.tf_directory }}
+      run: tflint --config ${{ github.workspace }}/.tflint.hcl 
+    - name: Checkov Scan
+      uses: bridgecrewio/checkov-action@7b972723c44fb3d256283fac96fae5d7c1894bb7
+      with:
+        directory: ${{ inputs.tf_directory }}
+        soft_fail: false
+        download_external_modules: true
+        output_format: cli,sarif
+        output_file_path: console,checkov-static-scan-results.sarif
+    - name: Upload Checkov SARIF results
+      uses: github/codeql-action/upload-sarif@f0489abddd4e5e9dff53ed28a45b1d6f88978a1b
+      if: always()
+      with:
+        sarif_file: checkov-static-scan-results.sarif
+
