@@ -58,8 +58,8 @@ runs:
         directory: ${{ github.workspace }}
         soft_fail: ${{ inputs.checkov_soft_fail }}
         download_external_modules: true
-        output_format: cli,sarif
-        output_file_path: console,results.sarif
+        output_format: sarif
+        output_file_path: results.sarif
     - name: check all files  
       shell: bash
       run: |
@@ -70,5 +70,6 @@ runs:
     - name: Upload Checkov SARIF results
       uses: github/codeql-action/upload-sarif@f0489abddd4e5e9dff53ed28a45b1d6f88978a1b
       if: always()
+      continue-on-error: true
       with:
         sarif_file: ${{ github.workspace }}/results.sarif
