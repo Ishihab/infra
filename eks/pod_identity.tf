@@ -27,6 +27,9 @@ module "external_secrets_pod_identity" {
   name    = "external-secrets"
 
   attach_external_secrets_policy        = true
+  #checkov:skip=CKV_AWS_356: AWS-managed External Secrets policy (attach_external_secrets_policy); many of its actions don't support resource-level ARNs — this is the AWS-published policy, not custom
+  #checkov:skip=CKV_AWS_111: AWS-managed External Secrets policy (attach_external_secrets_policy); many of its actions don't support resource-level ARNs — this is the AWS-published policy, not custom
+  #checkov:skip=CKV_AWS_109: AWS-managed External Secrets policy (attach_external_secrets_policy); many of its actions don't support resource-level ARNs — this is the AWS-published policy, not custom
   external_secrets_ssm_parameter_arns   = ["arn:aws:ssm:*:*:parameter/simple_social/*"]
   external_secrets_secrets_manager_arns = ["arn:aws:secretsmanager:*:*:secret:*"]
   external_secrets_kms_key_arns         = [data.aws_kms_alias.secrets_manager_kms_key_arn.arn]
