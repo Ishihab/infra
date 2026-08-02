@@ -89,7 +89,7 @@ module "eci_enpoint_sg" {
 }
 
 resource "aws_ec2_instance_connect_endpoint" "eks_end_point" {
-  subnet_id = module.vpc.private_subnets[0]
+  subnet_id          = module.vpc.private_subnets[0]
   security_group_ids = [module.eci_enpoint_sg.id]
 }
 
@@ -124,7 +124,7 @@ locals {
       type        = "String"
       description = "ID of the security group for the RDS instance"
       value       = module.mysql_rds_sg.id
-  } 
+    }
     eci_endpoint_id = {
       type        = "String"
       description = "ID of the ECI endpoint"
