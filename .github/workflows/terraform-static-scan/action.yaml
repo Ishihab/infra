@@ -59,10 +59,13 @@ runs:
         soft_fail: ${{ inputs.checkov_soft_fail }}
         download_external_modules: true
         output_format: cli,sarif
-        output_file_path: console,checkov-static-scan-results.sarif
+        output_file_path: console,results.sarif
+    - name: check file existence
+      shell: bash
+      run: find ${{ github.workspace }} -name "results.sarif" -type f -print
     - name: Upload Checkov SARIF results
       uses: github/codeql-action/upload-sarif@f0489abddd4e5e9dff53ed28a45b1d6f88978a1b
       if: always()
       with:
-        sarif_file: checkov-static-scan-results.sarif
+        sarif_file: results.sarif
 

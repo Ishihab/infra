@@ -1,0 +1,52 @@
+name: debug 
+
+on:
+  workflow_dispatch:
+
+
+jobs:
+  debug-tf-scan:
+    name: Debug
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+      - name: Set up Terraform
+        uses: ./.github/workflows/terraform-setup-cache
+        with:
+          tf_plugin_cache_dir: ${{ github.workspace }}/.terraform.d/plugin-cache
+          terraform_version: '1.15.8'
+      - name: check terraform static scan
+        uses: ./.github/workflows/terraform-static-scan
+        with:
+          checkov_soft_fail: 'true'
+          tf_plugin_cache_dir: ${{ github.workspace }}/.terraform.d/plugin-cache
+          tf_dirs: vpc eks rds addons
+          terraform_version: '1.15.8'
+
+  debug-tf-plan-scan:
+    name: Debug
+    environment: dev
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+      - name: Set up Terraform
+        uses: ./.github/workflows/terraform-aws-init
+        with:
+          tf_plugin_cache_dir: ${{ github.workspace }}/.terraform.d/plugin-cache
+          terraform_version: '1.15.8'
+          aws_role_arn: ${{ vars.AWS_ROLE_ARN }}
+          aws_region: 'us-east-1'
+          backend_bucket: ${{ vars.BACKEND_BUCKET }}
+          backend_key: 'terraform.tfstate'
+          working_directory: vpc
+
+      - name: check terraform plan scan
+        uses: ./.github/workflows/checkov-plan-scan
+        with:
+          checkov_soft_fail: 'false'
+          tf_plugin_cache_dir: ${{ github.workspace }}/.terraform.d/plugin-cache
+          tf_directory: vpc
+          terraform_version: '1.15.8'
+  
