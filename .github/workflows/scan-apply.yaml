@@ -55,7 +55,7 @@ jobs:
         uses: ./.github/workflows/terraform-setup-cache
         with:
           tf_plugin_cache_dir: ${{ env.TF_PLUGIN_CACHE_DIR }}
-          terraform_version: 6.0.0
+          terraform_version: 1.15.8
 
       - name: Terraform Init and Validate
         uses: ./.github/workflows/terraform-static-scan
@@ -77,7 +77,7 @@ jobs:
         uses: ./.github/workflows/terraform-aws-init
         with:
           tf_plugin_cache_dir: ${{ env.TF_PLUGIN_CACHE_DIR }}
-          terraform_version: 6.0.0
+          terraform_version: 1.15.8
           aws_role_arn: ${{ vars.AWS_ROLE_ARN }}
           aws_region: us-east-1
           backend_bucket: ${{ vars.BACKEND_BUCKET }}
@@ -126,7 +126,7 @@ jobs:
         uses: ./.github/workflows/terraform-aws-init
         with:
           tf_plugin_cache_dir: ${{ env.TF_PLUGIN_CACHE_DIR }}
-          terraform_version: 6.0.0
+          terraform_version: 1.15.8
           aws_role_arn: ${{ vars.AWS_ROLE_ARN }}
           aws_region: us-east-1
           backend_bucket: ${{ vars.BACKEND_BUCKET }}
@@ -175,7 +175,7 @@ jobs:
         uses: ./.github/workflows/terraform-aws-init
         with:
           tf_plugin_cache_dir: ${{ env.TF_PLUGIN_CACHE_DIR }}
-          terraform_version: 6.0.0
+          terraform_version: 1.15.8
           aws_role_arn: ${{ vars.AWS_ROLE_ARN }}
           aws_region: us-east-1
           backend_bucket: ${{ vars.BACKEND_BUCKET }}
@@ -224,7 +224,7 @@ jobs:
         uses: ./.github/workflows/terraform-aws-init
         with:
           tf_plugin_cache_dir: ${{ env.TF_PLUGIN_CACHE_DIR }}
-          terraform_version: 6.0.0
+          terraform_version: 1.15.8
           aws_role_arn: ${{ vars.AWS_ROLE_ARN }}
           aws_region: us-east-1
           backend_bucket: ${{ vars.BACKEND_BUCKET }}
