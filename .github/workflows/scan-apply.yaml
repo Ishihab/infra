@@ -87,7 +87,7 @@ jobs:
         working-directory: vpc
         shell: bash
         run: |
-          terraform plan -out=tfplan.binary -var-file=./environment/dev.tfvars -input=false
+          terraform plan -out=tfplan.binary -var= -input=false
           terraform show -no-color tfplan.binary > tfplan.txt
       - name: checkov plan scan
         if: github.event_name == 'pull_request'
