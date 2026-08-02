@@ -3,7 +3,9 @@ name: debug
 on:
   workflow_dispatch:
 
-
+permissions: 
+  contents: read
+  id-token: write
 jobs:
   debug-tf-scan:
     name: Debug

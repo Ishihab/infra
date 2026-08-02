@@ -60,6 +60,10 @@ runs:
         download_external_modules: true
         output_format: cli,sarif
         output_file_path: console,results.sarif
+    - name: check all files  
+      shell: bash
+      run: |
+        cd ${{ github.workspace }} && ls -R
     - name: check file existence
       shell: bash
       run: find ${{ github.workspace }} -name "results.sarif" -type f -print
