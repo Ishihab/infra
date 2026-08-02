@@ -1,0 +1,51 @@
+name: Terraform plan
+description: Setup terraform, cache and aws.
+
+inputs:
+  tf_plugin_cache_dir:
+    description: 'The directory to cache Terraform providers.'
+    required: true
+    default: '${{ github.workspace }}/.terraform.d/plugin-cache'
+  terraform_version:
+    description: 'The version of Terraform to set up.'
+    required: true
+    default: '6.0.0'
+  aws_role_arn:
+    description: 'The AWS role ARN to assume for Terraform operations.'
+    required: true
+  aws_region:
+    description: 'The AWS region to use for Terraform operations.'
+    required: true
+    default: 'us-east-1'
+  backend_bucket:
+    description: 'The S3 bucket for Terraform state backend.'
+    required: true
+  backend_key: 
+    description: 'The S3 key for Terraform state backend.'
+    required: true
+  working_directory:
+    description: 'The working directory for Terraform operations.'
+    required: true
+
+
+runs:
+  using: "composite"
+  steps:
+    - name: Set up Terraform and Cache Providers
+      uses: ./.github/workflows/terraform-setup-cache
+      with:
+        tf_plugin_cache_dir: ${{ inputs.tf_plugin_cache_dir }}
+        terraform_version: ${{ inputs.terraform_version }}
+    - name: Configure AWS Credentials
+      uses: aws-actions/configure-aws-credentials@e6de054238d6b7531b4efff3b6587d9aade6a06c
+      with:
+        role-to-assume: ${{ inputs.aws_role_arn }}
+        aws-region: ${{ inputs.aws_region }}
+    - name: Terraform Init
+      working-directory: ${{ inputs.working_directory }}
+      shell: bash
+      run: terraform init -backend-config="bucket=${{ inputs.backend_bucket }}" -backend-config="key=${{ inputs.backend_key }}"
+
+  
+  
+  

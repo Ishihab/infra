@@ -6,10 +6,6 @@ inputs:
     description: 'The directory containing the Terraform files to scan.'
     required: true
     default: './'
-  tf_plan_file:
-    description: 'The Terraform plan file to scan.'
-    required: true
-    default: 'tfplan.json'
   checkov_soft_fail:
     description: 'If true, the Checkov scan will not fail the workflow issues.'
     required: true
@@ -19,10 +15,14 @@ inputs:
 runs:
   using: "composite"
   steps:
+    - name: change tfplan to json
+      shell: bash
+      working-directory: ${{ inputs.tf_directory }}
+      run: terraform show -json tfplan.binary > tfplan.json
     - name: Checkov Plan Scan
       uses: bridgecrewio/checkov-action@7b972723c44fb3d256283fac96fae5d7c1894bb7
       with:
-        file: -${{ inputs.tf_directory }}/${{ inputs.tf_plan_file }}
+        file: ${{ inputs.tf_directory }}/tfplan.json
         soft_fail: ${{ inputs.checkov_soft_fail }}
         output_format: cli,sarif
         output_file_path: console,checkov-plan-scan-results.sarif

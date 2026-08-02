@@ -10,10 +10,7 @@ inputs:
     description: 'The version of Terraform to set up.'
     required: true
     default: '6.0.0'
-  working_directory:
-    description: 'The working directory for Terraform commands.'
-    required: true
-    default: './'
+
 
 
 runs:
@@ -32,6 +29,6 @@ runs:
       uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9
       with:
         path: ${{ inputs.tf_plugin_cache_dir }}
-        key: ${{ runner.os }}-terraform-${{ hashFiles('${{ inputs.working_directory }}/terraform.lock.hcl') }}
+        key: ${{ runner.os }}-terraform-${{ hashFiles('**/terraform.lock.hcl') }}
         restore-keys: |
-          ${{ runner.os }}-terraform-${{ hashFiles('${{ inputs.working_directory }}/terraform.lock.hcl') }}
+          ${{ runner.os }}-terraform-
