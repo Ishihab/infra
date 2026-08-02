@@ -83,7 +83,6 @@ module "eci_enpoint_sg" {
   tags = {
     Name = "eci-endpoint-sg"
   }
-
 }
 
 locals {
