@@ -91,13 +91,13 @@ jobs:
           terraform show -no-color tfplan.binary > tfplan.txt
       - name: checkov plan scan
         if: github.event_name == 'pull_request'
-        uses: ./.github/workflows/terraform-plan-scan
+        uses: ./.github/workflows/checkov-plan-scan
         with:
           tf_directory: vpc
           checkov_soft_fail: ${{ env.CHECKOV_SOFT_FAIL }}
       - name: comment plan on pr
         if: github.event_name == 'pull_request'
-        uses: actions/github-script@v7
+        uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3
         with:
           script: |
             const fs = require('fs');
@@ -140,13 +140,13 @@ jobs:
           terraform show -no-color tfplan.binary > tfplan.txt
       - name: checkov plan scan
         if: github.event_name == 'pull_request'
-        uses: ./.github/workflows/terraform-plan-scan
+        uses: ./.github/workflows/checkov-plan-scan
         with:
           tf_directory: eks
           checkov_soft_fail: ${{ env.CHECKOV_SOFT_FAIL }}
       - name: comment plan on pr
         if: github.event_name == 'pull_request'
-        uses: actions/github-script@v7
+        uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3
         with:
           script: |
             const fs = require('fs');
@@ -189,13 +189,13 @@ jobs:
           terraform show -no-color tfplan.binary > tfplan.txt
       - name: checkov plan scan
         if: github.event_name == 'pull_request'
-        uses: ./.github/workflows/terraform-plan-scan
+        uses: ./.github/workflows/checkov-plan-scan
         with:
           tf_directory: rds
           checkov_soft_fail: ${{ env.CHECKOV_SOFT_FAIL }}
       - name: comment plan on pr
         if: github.event_name == 'pull_request'
-        uses: actions/github-script@v7
+        uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3
         with:
           script: |
             const fs = require('fs');
@@ -213,9 +213,9 @@ jobs:
         run: terraform apply -auto-approve tfplan.binary
 
   addons:
-    needs: [detect-which-dirs-changed, eks]
+    needs: [detect-which-dirs-changed, eks, vpc]
     environment: dev
-    if: always() && needs.detect-which-dirs-changed.outputs.addons == 'true' && (needs.eks.result == 'success' || needs.eks.result == 'skipped')
+    if: always() && needs.detect-which-dirs-changed.outputs.addons == 'true' && (needs.eks.result == 'success' || needs.eks.result == 'skipped') && (needs.vpc.result == 'success' || needs.vpc.result == 'skipped')
     runs-on: ubuntu-24.04
     steps:
       - name: Checkout repository
@@ -235,3 +235,27 @@ jobs:
         run: |
             terraform plan -out=tfplan.binary -var-file=./environment/dev.tfvars -input=false
             terraform show -no-color tfplan.binary > tfplan.txt
+      - name: checkov plan scan
+        if: github.event_name == 'pull_request'
+        uses: ./.github/workflows/checkov-plan-scan
+        with:
+          tf_directory: addons
+          checkov_soft_fail: ${{ env.CHECKOV_SOFT_FAIL }}
+      - name: comment plan on pr
+        if: github.event_name == 'pull_request'
+        uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3
+        with:
+          script: |
+            const fs = require('fs');
+            const plan = fs.readFileSync('addons/tfplan.txt', 'utf8');
+            const commentBody = `### Terraform Plan for Addons\n\`\`\`\n${plan}\n\`\`\``;
+            await github.rest.issues.createComment({
+              issue_number: context.payload.pull_request.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: commentBody
+            });
+      - name: Terraform Apply
+        if: github.event_name == 'push'
+        working-directory: addons
+        run: terraform apply -auto-approve tfplan.binary  

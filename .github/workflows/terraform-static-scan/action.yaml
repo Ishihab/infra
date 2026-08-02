@@ -14,6 +14,10 @@ inputs:
     description: 'A space-separated list of directories containing Terraform files to scan.'
     required: true
     default: 'vpc eks rds addons'
+  terrraform_version:
+    description: 'The version of Terraform to set up.'
+    required: true
+    default: '1.15.8'
 
 runs:
   using: "composite"
@@ -22,7 +26,7 @@ runs:
       uses: ./.github/workflows/terraform-setup-cache
       with:
         tf_plugin_cache_dir: ${{ inputs.tf_plugin_cache_dir }}
-        terraform_version: 6.0.0
+        terraform_version:  ${{ inputs.terrraform_version }}
     - name: Terraform Init
       shell: bash
       run: |
