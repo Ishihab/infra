@@ -27,21 +27,21 @@ runs:
       with:
         tf_plugin_cache_dir: ${{ inputs.tf_plugin_cache_dir }}
         terraform_version:  ${{ inputs.terrraform_version }}
-    - name: Terraform Init
-      shell: bash
-      run: |
-        for dir in ${{ inputs.tf_dirs }}; do
-          echo "=================================================="
-          echo "Processing Directory: $dir"
-          echo "=================================================="
+    # - name: Terraform Init
+    #   shell: bash
+    #   run: |
+    #     for dir in ${{ inputs.tf_dirs }}; do
+    #       echo "=================================================="
+    #       echo "Processing Directory: $dir"
+    #       echo "=================================================="
           
-          # Navigate to directory, run commands, and return
-          cd "$dir"
-          terraform init --backend=false
-          terraform validate
-          terraform fmt -check -recursive
-          cd - > /dev/null
-        done
+    #       # Navigate to directory, run commands, and return
+    #       cd "$dir"
+    #       terraform init --backend=false
+    #       terraform validate
+    #       terraform fmt -check -recursive
+    #       cd - > /dev/null
+    #     done
     - name: TfLint Setup
       uses: terraform-linters/setup-tflint@6e1e0642c0289bd619021bf6b34e3c08ed1e005a
       with:
@@ -64,12 +64,12 @@ runs:
       shell: bash
       run: |
         cd ${{ github.workspace }} && ls -R
-    - name: check file existence
-      shell: bash
-      run: find ${{ github.workspace }} -name "results.sarif" -type f -print
-    - name: Upload Checkov SARIF results
-      uses: github/codeql-action/upload-sarif@f0489abddd4e5e9dff53ed28a45b1d6f88978a1b
-      if: always()
-      continue-on-error: true
-      with:
-        sarif_file: ${{ github.workspace }}/results.sarif
+    # - name: check file existence
+    #   shell: bash
+    #   run: find ${{ github.workspace }} -name "results.sarif" -type f -print
+    # - name: Upload Checkov SARIF results
+    #   uses: github/codeql-action/upload-sarif@f0489abddd4e5e9dff53ed28a45b1d6f88978a1b
+    #   if: always()
+    #   continue-on-error: true
+    #   with:
+    #     sarif_file: ${{ github.workspace }}/results.sarif

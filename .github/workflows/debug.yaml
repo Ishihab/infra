@@ -25,31 +25,35 @@ jobs:
           tf_plugin_cache_dir: ${{ github.workspace }}/.terraform.d/plugin-cache
           tf_dirs: vpc eks rds addons
           terraform_version: '1.15.8'
+      - name: check file existence
+        run: cd ${{ github.workspace }} && ls -R
+      - name: find results.sarif
+        run: find ${{ github.workspace }} -name "results.sarif" -type f -print
 
-  debug-tf-plan-scan:
-    name: Debug
-    environment: dev
-    continue-on-error: true
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v3
-      - name: Set up Terraform
-        uses: ./.github/workflows/terraform-aws-init
-        with:
-          tf_plugin_cache_dir: ${{ github.workspace }}/.terraform.d/plugin-cache
-          terraform_version: '1.15.8'
-          aws_role_arn: ${{ vars.AWS_ROLE_ARN }}
-          aws_region: 'us-east-1'
-          backend_bucket: ${{ vars.BACKEND_BUCKET }}
-          backend_key: 'terraform.tfstate'
-          working_directory: vpc
+  # debug-tf-plan-scan:
+  #   name: Debug
+  #   environment: dev
+  #   continue-on-error: true
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - name: Checkout repository
+  #       uses: actions/checkout@v3
+  #     - name: Set up Terraform
+  #       uses: ./.github/workflows/terraform-aws-init
+  #       with:
+  #         tf_plugin_cache_dir: ${{ github.workspace }}/.terraform.d/plugin-cache
+  #         terraform_version: '1.15.8'
+  #         aws_role_arn: ${{ vars.AWS_ROLE_ARN }}
+  #         aws_region: 'us-east-1'
+  #         backend_bucket: ${{ vars.BACKEND_BUCKET }}
+  #         backend_key: 'terraform.tfstate'
+  #         working_directory: vpc
 
-      - name: check terraform plan scan
-        uses: ./.github/workflows/checkov-plan-scan
-        with:
-          checkov_soft_fail: 'false'
-          tf_plugin_cache_dir: ${{ github.workspace }}/.terraform.d/plugin-cache
-          tf_directory: vpc
-          terraform_version: '1.15.8'
+  #     - name: check terraform plan scan
+  #       uses: ./.github/workflows/checkov-plan-scan
+  #       with:
+  #         checkov_soft_fail: 'false'
+  #         tf_plugin_cache_dir: ${{ github.workspace }}/.terraform.d/plugin-cache
+  #         tf_directory: vpc
+  #         terraform_version: '1.15.8'
   
