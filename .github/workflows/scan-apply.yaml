@@ -111,9 +111,9 @@ jobs:
         shell: bash
         run: terraform apply -auto-approve tfplan.binary
   eks:
-    needs: detect-which-dirs-changed
+    needs: [detect-which-dirs-changed, vpc] 
     environment: dev
-    if: needs.detect-which-dirs-changed.outputs.eks == 'true'
+    if: always() && needs.detect-which-dirs-changed.outputs.eks == 'true' && (needs.vpc.result == 'success' || needs.vpc.result == 'skipped')
     runs-on: ubuntu-24.04
     steps:
       - name: Checkout repository, set up Terraform, cache providers, and configure AWS credentials
@@ -158,9 +158,9 @@ jobs:
         run: terraform apply -auto-approve tfplan.binary
   
   rds:
-    needs: detect-which-dirs-changed
+    needs: [detect-which-dirs-changed, vpc]
     environment: dev
-    if: needs.detect-which-dirs-changed.outputs.rds == 'true'
+    if: always() && needs.detect-which-dirs-changed.outputs.rds == 'true' && (needs.vpc.result == 'success' || needs.vpc.result == 'skipped')
     runs-on: ubuntu-24.04
     steps:
       - name: Checkout repository, set up Terraform, cache providers, and configure AWS credentials
@@ -205,9 +205,9 @@ jobs:
         run: terraform apply -auto-approve tfplan.binary
 
   addons:
-    needs: detect-which-dirs-changed
+    needs: [detect-which-dirs-changed, eks]
     environment: dev
-    if: needs.detect-which-dirs-changed.outputs.addons == 'true'
+    if: always() && needs.detect-which-dirs-changed.outputs.addons == 'true' && (needs.eks.result == 'success' || needs.eks.result == 'skipped')
     runs-on: ubuntu-24.04
     steps:
       - name: Checkout repository, set up Terraform, cache providers, and configure AWS credentials
