@@ -144,3 +144,4 @@ resource "aws_ssm_parameter" "vpc_outputs_for_eks" {
 }
 
 
+
