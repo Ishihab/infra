@@ -6,11 +6,17 @@ module "eks" {
   subnet_ids         = split(",", data.aws_ssm_parameter.private_subnets.value)
   kubernetes_version = var.kubernetes_version
   #checkov:skip=CKV_AWS_339: EKS support version 1.36, checkov is not updated yet, this is a false positive.
+  #checkov:skip=CKV_AWS_58: secrets encryption is enabled by default
+  #checkov:skip=CKV_AWS_338: retaining cloudwatch logs for 1 year is overkill for this project 
   endpoint_private_access                  = var.endpoint_private_access
   endpoint_public_access                   = var.endpoint_public_access
   enable_cluster_creator_admin_permissions = var.enable_cluster_creator_admin_permissions
   vpc_id                                   = data.aws_ssm_parameter.vpc_id.value
+  cloudwatch_log_group_class = "standard"
+  enabled_log_types = ["api", "audit", "authenticator", "controllerManager", "scheduler"]
+
   create_security_group                    = false
+  #checkov:skip=CKV2_AWS_5: security group is managed by eks
   security_group_additional_rules = {
     eci_endpoint = {
       from_port                = 443
@@ -53,13 +59,19 @@ module "eks" {
       metadata_options = {
         http_put_response_hop_limit = 2
         #checkov:skip=CKV_AWS_341: hop limit of 2 required to allow Pods to access node credentials. alb controller need vpc id from node metadata to function properly.
+        #checkov:skip=CKV_AWS_79: Instance Metadata Service Version 1 is not enabled
+        #checkov:skip=CKV_AWS_111: managed policy for EKS nodes, not custom, many of its actions don't support resource-level ARNs
+        #checkov:skip=CKV_AWS_356: managed policy for EKS nodes, not custom, many of its actions don't support resource-level ARNs
+        #checkov:skip=CKV2_AWS_5: security group is managed by eks
         http_tokens = "required"
+
       }
 
 
       min_size     = 1
       max_size     = 3
       desired_size = 2
+      create_security_group = false
     }
   }
 
@@ -101,5 +113,6 @@ resource "aws_ssm_parameter" "eks_output" {
   type        = each.value.type
   description = "managed by terraform,env ${var.environment} , ${each.value.description}"
   value       = each.value.value
+  #checkov:skip=CKV2_AWS_34:All eks data in ssm already encrypted 
 }
 

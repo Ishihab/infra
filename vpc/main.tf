@@ -19,6 +19,7 @@ module "vpc" {
   manage_default_security_group  = true
   default_security_group_egress  = []
   default_security_group_ingress = []
+  #checkov:skip=CKV2_AWS_12: all trafic for default security is already blocked 
 
   azs                              = local.azs
   public_subnets                   = [for k, v in local.azs : cidrsubnet(var.vpc_cidr, 4, k)]
@@ -51,6 +52,7 @@ module "mysql_rds_sg" {
   name    = "mysql-rds-sg"
   vpc_id  = module.vpc.vpc_id
   #checkov:skip=CKV_TF_1:This module are well maintained public terraform module, using sha will make upgrades more annoying for a personal project.
+  #checkov:skip=CKV2_AWS_5: this sg will be use with mysql rds instance 
   ingress_rules = {
     for cidr_block in module.vpc.private_subnets_cidr_blocks : "mysql-${cidr_block}" => {
       description = "Allow MySQL access from private subnet ${cidr_block}"
@@ -70,6 +72,7 @@ module "eci_enpoint_sg" {
   name    = "eci-endpoint-sg"
   vpc_id  = module.vpc.vpc_id
   #checkov:skip=CKV_TF_1:This module are well maintained public terraform module, using sha will make upgrades more annoying for a personal project.
+  #checkov:skip=CKV2_AWS_5: this sg will be use to allow eci endpoint access from eks cluster, this is required for the eks cluster to function properly.
   egress_rules = {
     allow_vpc = {
       description = "Allow HTTPS access to the VPC"
@@ -83,6 +86,11 @@ module "eci_enpoint_sg" {
   tags = {
     Name = "eci-endpoint-sg"
   }
+}
+
+resource "aws_ec2_instance_connect_endpoint" "eks_end_point" {
+  subnet_id = module.vpc.private_subnets[0]
+  security_group_ids = [module.eci_enpoint_sg.id]
 }
 
 locals {
@@ -116,7 +124,13 @@ locals {
       type        = "String"
       description = "ID of the security group for the RDS instance"
       value       = module.mysql_rds_sg.id
-  } }
+  } 
+    eci_endpoint_id = {
+      type        = "String"
+      description = "ID of the ECI endpoint"
+      value       = aws_ec2_instance_connect_endpoint.eks_end_point.id
+    }
+  }
 
 }
 
