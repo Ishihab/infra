@@ -9,7 +9,7 @@ inputs:
   terraform_version:
     description: 'The version of Terraform to set up.'
     required: true
-    default: '6.0.0'
+    default: '1.15.8'
   aws_role_arn:
     description: 'The AWS role ARN to assume for Terraform operations.'
     required: true
