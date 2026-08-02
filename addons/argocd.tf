@@ -9,4 +9,3 @@ resource "helm_release" "argo_cd" {
     file("${path.module}/argocd_values.yaml")
   ]
 }
-

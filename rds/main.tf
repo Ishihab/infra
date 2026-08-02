@@ -86,5 +86,3 @@ resource "aws_ssm_parameter" "db_outputs_for_eks" {
   description = "managed by terraform,env ${var.environment} , ${each.value.description}"
   value       = each.value.value
 }
-
-

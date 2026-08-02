@@ -115,4 +115,3 @@ resource "aws_ssm_parameter" "eks_output" {
   value       = each.value.value
   #checkov:skip=CKV2_AWS_34:All eks data in ssm already encrypted 
 }
-
