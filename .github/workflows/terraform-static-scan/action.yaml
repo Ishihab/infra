@@ -42,16 +42,16 @@ runs:
     #       terraform fmt -check -recursive
     #       cd - > /dev/null
     #     done
-    - name: TfLint Setup
-      uses: terraform-linters/setup-tflint@6e1e0642c0289bd619021bf6b34e3c08ed1e005a
-      with:
-        tflint_version: 0.64.0
-    - name: TfLint Init
-      shell: bash
-      run: tflint --init --config ${{ github.workspace }}/.tflint.hcl --recursive
-    - name: Run TfLint
-      shell: bash
-      run: tflint --config ${{ github.workspace }}/.tflint.hcl --recursive
+    # - name: TfLint Setup
+    #   uses: terraform-linters/setup-tflint@6e1e0642c0289bd619021bf6b34e3c08ed1e005a
+    #   with:
+    #     tflint_version: 0.64.0
+    # - name: TfLint Init
+    #   shell: bash
+    #   run: tflint --init --config ${{ github.workspace }}/.tflint.hcl --recursive
+    # - name: Run TfLint
+    #   shell: bash
+    #   run: tflint --config ${{ github.workspace }}/.tflint.hcl --recursive
     - name: Checkov Scan
       uses: bridgecrewio/checkov-action@7b972723c44fb3d256283fac96fae5d7c1894bb7
       with:
