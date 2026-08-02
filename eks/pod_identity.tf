@@ -26,7 +26,7 @@ module "external_secrets_pod_identity" {
   version = "2.8.1"
   name    = "external-secrets"
 
-  attach_external_secrets_policy        = true
+  attach_external_secrets_policy = true
   #checkov:skip=CKV_AWS_356: AWS-managed External Secrets policy (attach_external_secrets_policy); many of its actions don't support resource-level ARNs — this is the AWS-published policy, not custom
   #checkov:skip=CKV_AWS_111: AWS-managed External Secrets policy (attach_external_secrets_policy); many of its actions don't support resource-level ARNs — this is the AWS-published policy, not custom
   #checkov:skip=CKV_AWS_109: AWS-managed External Secrets policy (attach_external_secrets_policy); many of its actions don't support resource-level ARNs — this is the AWS-published policy, not custom
