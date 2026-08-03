@@ -12,7 +12,7 @@ module "eks" {
   endpoint_public_access                   = var.endpoint_public_access
   enable_cluster_creator_admin_permissions = var.enable_cluster_creator_admin_permissions
   vpc_id                                   = data.aws_ssm_parameter.vpc_id.value
-  cloudwatch_log_group_class               = "standard"
+  cloudwatch_log_group_class               = "STANDARD"
   enabled_log_types                        = ["api", "audit", "authenticator", "controllerManager", "scheduler"]
 
   create_security_group = false

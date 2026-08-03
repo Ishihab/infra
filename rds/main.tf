@@ -23,7 +23,7 @@ module "mysql_rds" {
   #checkov:skip=CKV_AWS_304:This is a personal project, not production, so we can skip this check.
   skip_final_snapshot             = true
   deletion_protection             = false
-  cloudwatch_log_group_class      = "standard"
+  cloudwatch_log_group_class      = "STANDARD"
   database_insights_mode          = "standard"
   enabled_cloudwatch_logs_exports = ["audit", "error", "general", "slowquery"]
   performance_insights_enabled    = true
