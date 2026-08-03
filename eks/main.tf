@@ -11,6 +11,7 @@ module "eks" {
   endpoint_private_access = var.endpoint_private_access
   endpoint_public_access  = var.endpoint_public_access
   #checkov:skip=CKV_AWS_39: disabling public acess make it complex to access the cluster, the option is either run action runner in the vpc or enable public access
+  #checkov:skip=CKV_AWS_38: disabling public access make it complex to access the cluster, the option is either run action runner in the vpc or enable public access
   enable_cluster_creator_admin_permissions = var.enable_cluster_creator_admin_permissions
   vpc_id                                   = data.aws_ssm_parameter.vpc_id.value
   cloudwatch_log_group_class               = "STANDARD"
