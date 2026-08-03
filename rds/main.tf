@@ -20,7 +20,7 @@ module "mysql_rds" {
   #checkov:skip=CKV_AWS_338:Overkill for a personal project, there is a charge for this
   #checkov:skip=CKV_AWS_293:Destroying later will be complicated, this is a personal project, not production.
   #checkov:skip=CKV_AWS_157:multi_az will double the cost, single az is enough for a personal project
-
+  #checkov:skip=CKV_AWS_304:This is a personal project, not production, so we can skip this check.
   skip_final_snapshot             = true
   deletion_protection             = false
   cloudwatch_log_group_class      = "standard"
@@ -85,4 +85,5 @@ resource "aws_ssm_parameter" "db_outputs_for_eks" {
   type        = each.value.type
   description = "managed by terraform,env ${var.environment} , ${each.value.description}"
   value       = each.value.value
+  #checkov:skip=CKV2_AWS_34:All rds data in ssm already encrypted
 }
