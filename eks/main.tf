@@ -8,8 +8,8 @@ module "eks" {
   #checkov:skip=CKV_AWS_339: EKS support version 1.36, checkov is not updated yet, this is a false positive.
   #checkov:skip=CKV_AWS_58: secrets encryption is enabled by default
   #checkov:skip=CKV_AWS_338: retaining cloudwatch logs for 1 year is overkill for this project 
-  endpoint_private_access                  = var.endpoint_private_access
-  endpoint_public_access                   = var.endpoint_public_access
+  endpoint_private_access = var.endpoint_private_access
+  endpoint_public_access  = var.endpoint_public_access
   #checkov:skip=CKV_AWS_39: disabling public acess make it complex to access the cluster, the option is either run action runner in the vpc or enable public access
   enable_cluster_creator_admin_permissions = var.enable_cluster_creator_admin_permissions
   vpc_id                                   = data.aws_ssm_parameter.vpc_id.value
