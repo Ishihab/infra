@@ -87,3 +87,5 @@ resource "aws_ssm_parameter" "db_outputs_for_eks" {
   value       = each.value.value
   #checkov:skip=CKV2_AWS_34:All rds data in ssm already encrypted
 }
+
+

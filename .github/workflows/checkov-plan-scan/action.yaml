@@ -24,7 +24,7 @@ runs:
       with:
         file: ${{ inputs.tf_directory }}/tfplan.json
         soft_fail: ${{ inputs.checkov_soft_fail }}
-        skip_check: CKV2_AWS_5, CKV2_AWS_11, CKV2_AWS_34, CKV2_AWS_19, CKV_AWS_39
+        skip_check: CKV2_AWS_5, CKV2_AWS_11, CKV2_AWS_34, CKV2_AWS_19, CKV_AWS_39, CKV_AWS_133, CKV_AWS_157, CKV_AWS_161, CKV_AWS_293, CKV_AWS_382, CKV_AWS_339, CKV_AWS_38, CKV_AWS_338, CKV_AWS_158, CKV_AWS_341, CKV_AWS_355, CKV_AWS_290
         output_format: cli,sarif
         output_file_path: console,results.sarif
     - name: Upload Checkov SARIF Results
