@@ -30,7 +30,7 @@ variable "endpoint_private_access" {
 variable "endpoint_public_access" {
   description = "Whether to enable public access to the EKS cluster endpoint"
   type        = bool
-  default     = false
+  default     = true
 }
 
 variable "enable_cluster_creator_admin_permissions" {
