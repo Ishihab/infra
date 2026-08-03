@@ -15,6 +15,8 @@ env:
   TF_PLUGIN_CACHE_DIR: ${{ github.workspace }}/.terraform.d/plugin-cache
   TF_DIR: "vpc eks rds addons"
   CHECKOV_SOFT_FAIL: false
+  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  
 
 
 permissions:
