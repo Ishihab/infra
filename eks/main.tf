@@ -14,8 +14,6 @@ module "eks" {
   vpc_id                                   = data.aws_ssm_parameter.vpc_id.value
   cloudwatch_log_group_class               = "STANDARD"
   enabled_log_types                        = ["api", "audit", "authenticator", "controllerManager", "scheduler"]
-
-  create_security_group = false
   #checkov:skip=CKV2_AWS_5: security group is managed by eks
   security_group_additional_rules = {
     eci_endpoint = {
@@ -71,7 +69,6 @@ module "eks" {
       min_size              = 1
       max_size              = 3
       desired_size          = 2
-      create_security_group = false
     }
   }
 
