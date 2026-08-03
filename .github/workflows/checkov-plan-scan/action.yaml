@@ -27,3 +27,7 @@ runs:
         skip_check: CKV2_AWS_5, CKV2_AWS_11, CKV2_AWS_34, CKV2_AWS_19
         output_format: cli,sarif
         output_file_path: console,results.sarif
+    - name: Upload Checkov SARIF Results
+      uses: github/codeql-action/upload-sarif@18420e3271f74589575af831a523c833acda327f
+      with:
+        sarif_file: ${{ github.workspace }}/results.sarif

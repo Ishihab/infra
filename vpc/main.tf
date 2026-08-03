@@ -143,5 +143,3 @@ resource "aws_ssm_parameter" "vpc_outputs_for_eks" {
   #checkov:skip=CKV2_AWS_34:Non sensitive vpc resource references, not sensitive data, no need SecretString type.
 }
 
-
-
