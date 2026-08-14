@@ -31,22 +31,22 @@ module "mysql_rds" {
   create_monitoring_role          = true
   parameters = [
     {
-      name  = "slow_query_log"
-      value = "1"
+      name  = "log_statements"
+      value = "all"
     },
 
     {
-      name  = "long_query_time"
-      value = "2"
+      name  = "log_min_duration_statement"
+      value = "2000"
     },
 
     {
-      name  = "log_output"
-      value = "FILE"
+      name  = "log_destination"
+      value = "stderr"
     },
 
     {
-      name  = "time_zone"
+      name  = "timezone"
       value = "UTC"
   }]
 
