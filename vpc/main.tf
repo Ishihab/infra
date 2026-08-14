@@ -47,21 +47,21 @@ module "vpc" {
 
 }
 
-module "pg_rds_sg" {
+module "mysql_rds_sg" {
   source  = "terraform-aws-modules/security-group/aws"
   version = "6.0.0"
-  name    = "pg-rds-sg"
+  name    = "mysql-rds-sg"
   vpc_id  = module.vpc.vpc_id
   #checkov:skip=CKV_TF_1:This module are well maintained public terraform module, using sha will make upgrades more annoying for a personal project.
   #checkov:skip=CKV2_AWS_5: this sg will be use with mysql rds instance 
   ingress_rules = {
-    for cidr_block in module.vpc.private_subnets_cidr_blocks : "pg-${cidr_block}" => {
-      description = "Allow PostgreSQL access from private subnet ${cidr_block}"
+    for cidr_block in module.vpc.private_subnets_cidr_blocks : "mysql-${cidr_block}" => {
+      description = "Allow MySQL access from private subnet ${cidr_block}"
       from_port   = 5432
       to_port     = 5432
       ip_protocol = "tcp"
       cidr_ipv4   = cidr_block
-      name        = "pg-${cidr_block}"
+      name        = "mysql-${cidr_block}"
     }
   }
 
@@ -124,7 +124,7 @@ locals {
     db_sg_id = {
       type        = "String"
       description = "ID of the security group for the RDS instance"
-      value       = module.pg_rds_sg.id
+      value       = module.mysql_rds_sg.id
     }
     eci_endpoint_id = {
       type        = "String"
