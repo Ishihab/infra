@@ -1,4 +1,5 @@
 
+
 module "aws_lb_controller_pod_identity" {
   #checkov:skip=CKV_TF_1:This module are well maintained public terraform module, using sha will upgrades more annoying for a personal project.
   source  = "terraform-aws-modules/eks-pod-identity/aws"
@@ -71,3 +72,18 @@ module "ebs_csi_driver_pod_identity_role_policy" {
   }
 }
 
+module "s3_pod_idenity_for_simple_social" {
+  #checkov:skip=CKV_TF_1:This module are well maintained public terraform module, using sha will upgrades more annoying for a personal project.
+  source                  = "terraform-aws-modules/eks-pod-identity/aws"
+  version                 = "2.8.1"
+  name                    = "s3-access-for-simple-social"
+  attach_custom_policy    = true
+  source_policy_documents = [data.aws_iam_policy_document.s3_access.json]
+  associations = {
+    s3_access_for_simple_social = {
+      cluster_name    = var.cluster_name
+      namespace       = "simple-social"
+      service_account = "simple-social"
+    }
+  }
+}
