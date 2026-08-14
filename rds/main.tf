@@ -21,12 +21,15 @@ module "mysql_rds" {
   #checkov:skip=CKV_AWS_293:Destroying later will be complicated, this is a personal project, not production.
   #checkov:skip=CKV_AWS_157:multi_az will double the cost, single az is enough for a personal project
   #checkov:skip=CKV_AWS_304:This is a personal project, not production, so we can skip this check.
-  skip_final_snapshot             = true
-  deletion_protection             = false
-  cloudwatch_log_group_class      = "STANDARD"
-  database_insights_mode          = "standard"
-  enabled_cloudwatch_logs_exports = ["audit", "error", "general", "slowquery"]
-  performance_insights_enabled    = true
+  skip_final_snapshot        = true
+  deletion_protection        = false
+  cloudwatch_log_group_class = "STANDARD"
+  database_insights_mode     = "standard"
+  enabled_cloudwatch_logs_exports = [
+    "postgresql",
+    "upgrade"
+  ]
+  performance_insights_enabled = true
   #checkov:skip=CKV_AWS_354:Aws managed KMS key is fine for this size of porject, unless there is strict compliance requirement, no need to create a custom kms key.
   monitoring_interval    = 60
   create_monitoring_role = true
