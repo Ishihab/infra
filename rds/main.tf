@@ -64,10 +64,15 @@ locals {
       description = "The name of the database"
       value       = module.mysql_rds.db_instance_name
     }
-    db_endpoint = {
+    db_host = {
       type        = "SecureString"
       description = "The endpoint of the database"
-      value       = module.mysql_rds.db_instance_endpoint
+      value       = split(":", module.mysql_rds.db_instance_endpoint)[0]
+    }
+    db_port = {
+      type        = "SecureString"
+      description = "The port of the database"
+      value       = split(":", module.mysql_rds.db_instance_endpoint)[1]
     }
     db_username = {
       type        = "SecureString"
@@ -90,6 +95,7 @@ resource "aws_ssm_parameter" "db_outputs_for_eks" {
   type        = each.value.type
   description = "managed by terraform,env ${var.environment} , ${each.value.description}"
   value       = each.value.value
+
   #checkov:skip=CKV2_AWS_34:All rds data in ssm already encrypted
   #checkov:skip=CKV_AWS_337:Aws managed kms key is fine for this size of porject, unless there is strict compliance requirement, no need to create a custom kms key.
 }
