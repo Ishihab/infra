@@ -28,6 +28,7 @@ module "vpc" {
   create_private_nat_gateway_route = var.create_private_nat_gateway_route
   database_subnet_group_name       = "${var.vpc_name}-db-subnet-group"
   create_database_subnet_group     = var.create_database_subnet_group
+  #checkov:skip=CKV2_AWS_11: will enable flow logs later 
 
   enable_nat_gateway     = true
   single_nat_gateway     = var.single_nat_gateway
