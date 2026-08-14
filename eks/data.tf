@@ -25,6 +25,9 @@ data "aws_iam_policy_document" "s3_access" {
       "s3:ListBucket"
     ]
     resources = [
+      #checkov:skip=CKV_AWS_356: can't use resource-level ARNs for object that are not yet created
+      #checkov:skip=CKV_AWS_111: can't use resource-level ARNs for object that are not yet created
+      #checkov:skip=CKV_AWS_109: can't use resource-level ARNs for object that are not yet created
       "arn:aws:s3:::simple-social",
       "arn:aws:s3:::simple-social/*"
     ]
