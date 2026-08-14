@@ -33,3 +33,22 @@ data "aws_iam_policy_document" "s3_access" {
     ]
   }
 }
+
+
+data "aws_iam_policy_document" "github_oidc_permission_ecr" {
+  statement {
+    effect = "Allow"
+    actions = [
+      "ecr:GetAuthorizationToken",
+      "ecr:BatchCheckLayerAvailability",
+      "ecr:PutImage",
+      "ecr:InitiateLayerUpload",
+      "ecr:UploadLayerPart",
+      "ecr:CompleteLayerUpload",
+    ]
+    #checkov:skip=CKV_AWS_356: can't use resource-level ARNs for object that are not yet created
+    #checkov:skip=CKV_AWS_111: can't use resource-level ARNs for object that are not yet created
+    #checkov:skip=CKV_AWS_109: can't use resource-level ARNs for object that are not yet created
+    resources = ["*"]
+  }
+}
