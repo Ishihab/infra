@@ -33,7 +33,7 @@ module "mysql_rds" {
   #checkov:skip=CKV2_AWS_30:query logging is already enabled 
   parameters = [
     {
-      name  = "log_statements"
+      name  = "log_statement"
       value = "all"
     },
 
@@ -88,7 +88,7 @@ resource "aws_ssm_parameter" "db_outputs_for_eks" {
   description = "managed by terraform,env ${var.environment} , ${each.value.description}"
   value       = each.value.value
   #checkov:skip=CKV2_AWS_34:All rds data in ssm already encrypted
-  #checkov:skip=CKV_AWS_337:aws managed kms key is fine for this size of porject, unless there is strict compliance requirement, no need to create a custom kms key.
+  #checkov:skip=CKV_AWS_337:Aws managed kms key is fine for this size of porject, unless there is strict compliance requirement, no need to create a custom kms key.
 }
 
 
