@@ -5,7 +5,7 @@ module "mysql_rds" {
   identifier                  = var.db_identifier
   engine                      = var.db_engine
   engine_version              = var.db_engine_version
-  family                      = "${var.db_engine}${var.db_engine_version}"
+  family                      = "${var.db_engine}${split(".", var.db_engine_version)[0]}"
   major_engine_version        = var.db_engine_version
   instance_class              = var.db_instance_class
   allocated_storage           = var.db_allocated_storage
@@ -27,8 +27,10 @@ module "mysql_rds" {
   database_insights_mode          = "standard"
   enabled_cloudwatch_logs_exports = ["audit", "error", "general", "slowquery"]
   performance_insights_enabled    = true
-  monitoring_interval             = 60
-  create_monitoring_role          = true
+  #checkov:skip=CKV_AWS_354:Aws managed KMS key is fine for this size of porject, unless there is strict compliance requirement, no need to create a custom kms key.
+  monitoring_interval    = 60
+  create_monitoring_role = true
+  #checkov:skip=CKV2_AWS_30:query logging is already enabled 
   parameters = [
     {
       name  = "log_statements"
@@ -86,6 +88,7 @@ resource "aws_ssm_parameter" "db_outputs_for_eks" {
   description = "managed by terraform,env ${var.environment} , ${each.value.description}"
   value       = each.value.value
   #checkov:skip=CKV2_AWS_34:All rds data in ssm already encrypted
+  #checkov:skip=CKV_AWS_337:aws managed kms key is fine for this size of porject, unless there is strict compliance requirement, no need to create a custom kms key.
 }
 
 
