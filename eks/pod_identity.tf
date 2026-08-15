@@ -91,3 +91,33 @@ module "s3_pod_idenity_for_simple_social" {
   }
   depends_on = [module.eks, data.aws_iam_policy_document.s3_access]
 }
+
+
+resource "aws_iam_policy" "github_oidc_permission_ecr" {
+  name        = "github-oidc-permission-ecr"
+  description = "IAM policy for GitHub OIDC to access ECR"
+  policy      = data.aws_iam_policy_document.github_oidc_permission_ecr.json
+}
+
+
+
+module "github_oidc_role_for_ecr" {
+  #checkov:skip=CKV_TF_1:This module are well maintained public terraform module, using sha will upgrades more annoying for a personal project.
+  source = "terraform-aws-modules/iam/aws//modules/iam-role"
+
+  version = "6.8.0"
+
+  enable_github_oidc = true
+
+  name                   = "github-oidc-role-for-ecr"
+  oidc_wildcard_subjects = ["Ishihab@89814905/simple-social@1321989475:ref:refs/heads/main"]
+
+  #checkov:skip=CKV_AWS_356: can't use resource-level ARNs for object that are not yet created
+  #checkov:skip=CKV_AWS_111: can't use resource-level ARNs for object that are not yet created
+  #checkov:skip=CKV_AWS_109: can't use resource-level ARNs for object that are not yet created
+
+  policies = {
+    github_oidc_permission_ecr = aws_iam_policy.github_oidc_permission_ecr.arn
+  }
+
+}

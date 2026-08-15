@@ -9,6 +9,8 @@
 *.tfstate
 *.tfstate.*
 *tfstate*
+tfstate.json
+*/tfstate.json
 
 # Crash log files
 crash.log
