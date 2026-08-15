@@ -4,7 +4,7 @@ module "ecr" {
   version         = "3.2.0"
   repository_name = "gitops-infra-terraform-ecr"
 
-  repository_read_write_access_arns = ["arn:aws:iam::012345678901:role/terraform"]
+  repository_read_write_access_arns = [ module.github_oidc_role_for_ecr.arn ]
   repository_lifecycle_policy = jsonencode({
     rules = [
       {
@@ -27,3 +27,6 @@ module "ecr" {
     Environment = "dev"
   }
 }
+
+
+
