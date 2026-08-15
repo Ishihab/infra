@@ -1,6 +1,6 @@
 # infra
 
-Terraform code that provisions the AWS infrastructure for a self-service GitOps platform on EKS: networking, the cluster itself, a database, and the IAM/Pod Identity roles every platform service needs. The last step it takes is installing Argo CD and pointing it at the companion [`gitops`](https://github.com/Ishihab/gitops.git) repo, which is where platform services and applications actually get deployed from.
+This Reop contain Terraform code that provisions the AWS infrastructure for a self-service GitOps platform on EKS: networking, the cluster itself, a database, and the IAM/Pod Identity roles every platform service needs. The last step it takes is installing Argo CD and pointing it at the companion [`gitops`](https://github.com/Ishihab/gitops.git) repo, which is where platform services and applications actually get deployed from.
 
 `infra` and `gitops` together are the portfolio project: a self-service GitOps platform on EKS. [`simple-social`](https://github.com/Ishihab/simple-social) is a separate FastAPI portfolio project of mine — it isn't part of this platform's infrastructure, it's just used as a real workload to exercise it (its CI builds an image, pushes it to the ECR repo `eks/` provisions here using the OIDC role also provisioned here, and Argo CD deploys it from the `gitops` repo like any other app).
 
