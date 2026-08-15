@@ -12,9 +12,9 @@ env:
 
 jobs:
   
-  initial-apply:
+  vpc:
     environment: dev
-    name: Initial Apply
+    name: VPC Apply
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
@@ -47,6 +47,37 @@ jobs:
       - name: Terraform Check VPC
         working-directory: ./vpc
         run: terraform fmt -check -recursive
+      - name: Terraform Apply VPC
+        working-directory: ./vpc
+        run: terraform apply -auto-approve -var-file=./environment/dev.tfvars 
+  eks:
+    needs: vpc
+    if: always() 
+    environment: dev
+    name: EKS Apply
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+      - name: Set up Terraform
+        uses: hashicorp/setup-terraform@dfe3c3f87815947d99a8997f908cb6525fc44e9e
+      - name: Create Terraform Plugin Cache Directory
+        run: mkdir -p ${{ github.workspace }}/.terraform.d/plugin-cache
+      - name: Cache Terraform Providers
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9
+        with:
+          path: ${{env.TF_PLUGIN_CACHE_DIR}}
+          key: ${{ runner.os }}-terraform-${{ hashFiles('**/terraform.lock.hcl') }}
+          restore-keys: |
+            ${{ runner.os }}-terraform-
+        
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@e6de054238d6b7531b4efff3b6587d9aade6a06c
+        with:
+          role-to-assume: ${{ vars.AWS_ROLE_ARN }}
+          aws-region: us-east-1
+          audience: "sts.amazonaws.com"
+          role-skip-session-tagging: true  
       - name: Terraform Init EKS
         working-directory: ./eks
         run: terraform init -backend-config="bucket=${{ vars.BACKEND_BUCKET }}" -backend-config="key=${{ vars.EKS_BACKEND_KEY }}"
@@ -56,6 +87,38 @@ jobs:
       - name: Terraform Check EKS
         working-directory: ./eks
         run: terraform fmt -check -recursive
+      - name: Terraform Apply EKS
+        working-directory: ./eks
+        run: terraform apply -auto-approve -var-file=./environment/dev.tfvars
+
+  rds:
+    needs: vpc
+    if: always() 
+    environment: dev
+    name: RDS Apply
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+      - name: Set up Terraform
+        uses: hashicorp/setup-terraform@dfe3c3f87815947d99a8997f908cb6525fc44e9e
+      - name: Create Terraform Plugin Cache Directory
+        run: mkdir -p ${{ github.workspace }}/.terraform.d/plugin-cache
+      - name: Cache Terraform Providers
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9
+        with:
+          path: ${{env.TF_PLUGIN_CACHE_DIR}}
+          key: ${{ runner.os }}-terraform-${{ hashFiles('**/terraform.lock.hcl') }}
+          restore-keys: |
+            ${{ runner.os }}-terraform-
+        
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@e6de054238d6b7531b4efff3b6587d9aade6a06c
+        with:
+          role-to-assume: ${{ vars.AWS_ROLE_ARN }}
+          aws-region: us-east-1
+          audience: "sts.amazonaws.com"
+          role-skip-session-tagging: true
       - name: Terraform Init RDS
         working-directory: ./rds
         run: terraform init -backend-config="bucket=${{ vars.BACKEND_BUCKET }}" -backend-config="key=${{ vars.RDS_BACKEND_KEY }}"
@@ -65,6 +128,39 @@ jobs:
       - name: Terraform Check RDS
         working-directory: ./rds
         run: terraform fmt -check -recursive
+      - name: Terraform Apply RDS
+        working-directory: ./rds
+        run: terraform apply -auto-approve -var="db_username=${{ secrets.DB_USERNAME }}" -var-file=./environment/dev.tfvars
+  
+  addons:
+    needs: eks
+    if: always() 
+    environment: dev
+    name: Addons Apply
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+      - name: Set up Terraform
+        uses: hashicorp/setup-terraform@dfe3c3f87815947d99a8997f908cb6525fc44e9e
+      - name: Create Terraform Plugin Cache Directory
+        run: mkdir -p ${{ github.workspace }}/.terraform.d/plugin-cache
+      - name: Cache Terraform Providers
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9
+        with:
+          path: ${{env.TF_PLUGIN_CACHE_DIR}}
+          key: ${{ runner.os }}-terraform-${{ hashFiles('**/terraform.lock.hcl') }}
+          restore-keys: |
+            ${{ runner.os }}-terraform-
+        
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@e6de054238d6b7531b4efff3b6587d9aade6a06c
+        with:
+          role-to-assume: ${{ vars.AWS_ROLE_ARN }}
+          aws-region: us-east-1
+          audience: "sts.amazonaws.com"
+          role-skip-session-tagging: true
+
       - name: Terraform Init Addons
         working-directory: ./addons
         run: terraform init -backend-config="bucket=${{ vars.BACKEND_BUCKET }}" -backend-config="key=${{ vars.ADDONS_BACKEND_KEY }}"
@@ -74,15 +170,6 @@ jobs:
       - name: Terraform Check Addons
         working-directory: ./addons
         run: terraform fmt -check -recursive
-      - name: Terraform Apply VPC
-        working-directory: ./vpc
-        run: terraform apply -auto-approve -var-file=./environment/dev.tfvars 
-      - name: Terraform Apply EKS
-        working-directory: ./eks
-        run: terraform apply -auto-approve -var-file=./environment/dev.tfvars
-      - name: Terraform Apply RDS
-        working-directory: ./rds
-        run: terraform apply -auto-approve -var="db_username=${{ secrets.DB_USERNAME }}" -var-file=./environment/dev.tfvars
       - name: Terraform Apply Addons
         working-directory: ./addons
         run: terraform apply -auto-approve -var-file=./environment/dev.tfvars
