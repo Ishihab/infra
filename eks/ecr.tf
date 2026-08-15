@@ -4,16 +4,17 @@ module "ecr" {
   version         = "3.2.0"
   repository_name = "gitops-infra-terraform-ecr"
 
-  repository_read_write_access_arns = [ module.github_oidc_role_for_ecr.arn ]
+  repository_read_write_access_arns = [module.github_oidc_role_for_ecr.arn]
   repository_lifecycle_policy = jsonencode({
     rules = [
       {
         rulePriority = 1,
-        description  = "Keep last 30 images",
+        description  = "Keep last 30 sha-tagged images",
         selection = {
-          tagStatus   = "tagged",
-          countType   = "imageCountMoreThan",
-          countNumber = 30
+          tagStatus     = "tagged",
+          tagPrefixList = ["sha-"],
+          countType     = "imageCountMoreThan",
+          countNumber   = 30
         },
         action = {
           type = "expire"
