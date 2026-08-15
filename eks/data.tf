@@ -39,7 +39,17 @@ data "aws_iam_policy_document" "github_oidc_permission_ecr" {
   statement {
     effect = "Allow"
     actions = [
+      "ecr:ListTagsForResource",
+      "ecr:ListImages",
+      "ecr:GetRepositoryPolicy",
+      "ecr:GetLifecyclePolicyPreview",
+      "ecr:GetLifecyclePolicy",
+      "ecr:GetDownloadUrlForLayer",
       "ecr:GetAuthorizationToken",
+      "ecr:DescribeRepositories",
+      "ecr:DescribeImages",
+      "ecr:DescribeImageScanFindings",
+      "ecr:BatchGetImage",
       "ecr:BatchCheckLayerAvailability",
       "ecr:PutImage",
       "ecr:InitiateLayerUpload",
